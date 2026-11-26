@@ -45,6 +45,18 @@
       <p class="text-xs text-slate-500 mt-1">Please sign in to access property management</p>
     </div>
 
+    <!-- Already Logged In Banner (Shows if already authenticated instead of disappearing the login page) -->
+    <div id="alreadyLoggedInBanner" class="hidden mb-5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center justify-between gap-2">
+      <div>
+        <p class="font-bold text-emerald-900">✓ You are currently signed in</p>
+        <p class="text-[11px] text-emerald-700">Admin session is active on this browser.</p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <a href="panel.html" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-bold text-xs shadow-xs transition">Dashboard →</a>
+        <button type="button" onclick="logoutAdminHere()" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg font-semibold text-xs transition">Logout</button>
+      </div>
+    </div>
+
     <!-- ERROR MESSAGE BOX (Displays when wrong password or user ID is entered) -->
     <div id="errorAlert" class="hidden mb-5 p-3.5 bg-rose-50 border-2 border-rose-300 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2.5">
       <svg class="w-5 h-5 shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,9 +112,26 @@
     const VALID_USER_ID = "1963";
     const VALID_PASSWORD = "Rajani08";
 
-    // If already logged in, redirect straight to panel.html
-    if (sessionStorage.getItem("mmestate_admin_authenticated") === "true" || localStorage.getItem("mmestate_admin_authenticated") === "true") {
-      window.location.replace("panel.html");
+    // Check if session is already active: display the banner, don't vanish the page
+    const isAuthed = sessionStorage.getItem("mmestate_admin_authenticated") === "true" || 
+                     localStorage.getItem("mmestate_admin_authenticated") === "true";
+    if (isAuthed) {
+      const banner = document.getElementById("alreadyLoggedInBanner");
+      if (banner) banner.classList.remove("hidden");
+    }
+
+    function logoutAdminHere() {
+      sessionStorage.removeItem("mmestate_admin_authenticated");
+      localStorage.removeItem("mmestate_admin_authenticated");
+      const banner = document.getElementById("alreadyLoggedInBanner");
+      if (banner) banner.classList.add("hidden");
+      const alertBox = document.getElementById("errorAlert");
+      const errorMsg = document.getElementById("errorMessage");
+      if (alertBox && errorMsg) {
+        errorMsg.innerText = "You have been logged out. Please sign in below.";
+        alertBox.className = "mb-5 p-3.5 bg-brand-50 border border-brand-200 rounded-xl text-brand-800 text-xs font-semibold flex items-center gap-2.5";
+        alertBox.classList.remove("hidden");
+      }
     }
 
     function togglePasswordVisibility() {
@@ -145,14 +174,15 @@
           window.location.replace("panel.html");
         }, 150);
       } else {
-        // INCORRECT CREDENTIALS - MENTION CLEARLY
+        // INCORRECT CREDENTIALS (Secure message without revealing passwords)
+        alertBox.className = "mb-5 p-3.5 bg-rose-50 border-2 border-rose-300 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2.5";
         alertBox.classList.remove("hidden");
         if (!isUserMatch && !isPassMatch) {
-          errorMsg.innerHTML = "<strong>Wrong Credentials!</strong> Both User ID and Password are incorrect. (Correct: 1963 / Rajani08)";
+          errorMsg.innerHTML = "<strong>Incorrect User ID &amp; Password.</strong> Please check your credentials and try again.";
         } else if (!isUserMatch) {
-          errorMsg.innerHTML = "<strong>Wrong User ID!</strong> Expected <strong>1963</strong>. Please check and try again.";
+          errorMsg.innerHTML = "<strong>Incorrect User ID.</strong> Please check and try again.";
         } else {
-          errorMsg.innerHTML = "<strong>Wrong Password!</strong> Expected <strong>Rajani08</strong>. (Click 👁️ to see what you typed)";
+          errorMsg.innerHTML = "<strong>Incorrect Password.</strong> (Click 👁️ icon to verify what was typed).";
         }
 
         // Visual shake animation

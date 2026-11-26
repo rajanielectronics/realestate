@@ -660,7 +660,7 @@
 
     function getSafeMapUrl(prop) {
       const link = (prop && prop.google_maps_link) ? String(prop.google_maps_link).trim() : '';
-      if (link && !link.includes('/example') && (link.startsWith('http://') || link.startsWith('https://'))) {
+      if (link && !link.includes('/example') && !link.includes('maps.app.goo.gl/example') && (link.startsWith('http://') || link.startsWith('https://'))) {
         return link;
       }
       const loc = (prop && prop.location) ? prop.location.trim() : (prop && prop.title ? prop.title.trim() : 'Gujarat, India');
