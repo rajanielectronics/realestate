@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" name="viewport"/>
   <title>M&MESTATE - Admin Login</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <style>
+    @media screen and (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+  </style>
   <script>
     tailwind.config = {
       theme: {
