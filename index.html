@@ -486,41 +486,63 @@
 
           const primaryImage = (prop.images && prop.images.length > 0) 
             ? prop.images[0] 
-            : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80';
+            : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80';
 
           const hasVideo = prop.videos && prop.videos.length > 0;
+          const isLand = (prop.property_type || '').toLowerCase().includes('land');
+          const displayPrice = prop.total_price || prop.price || 0;
+          const mapLink = prop.google_maps_link;
 
           card.innerHTML = `
             <div>
               <div class="relative h-48 w-full overflow-hidden bg-slate-100">
                 <img alt="${escapeHtml(prop.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${primaryImage}"/>
-                <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                  <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">
+                <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-700 border border-emerald-200 backdrop-blur-sm">
                     ${prop.status || 'Active'}
                   </span>
                   ${hasVideo ? `<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-600 text-white shadow-xs">Video 🎥</span>` : ''}
+                  ${prop.road_type ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900/75 text-white backdrop-blur-xs">${escapeHtml(prop.road_type.split(' ')[0])}</span>` : ''}
                 </div>
-                <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[11px] font-bold bg-slate-900/80 text-white backdrop-blur-xs">
-                  $${(prop.price || 0).toLocaleString()} / ${prop.price_period || 'mo'}
+                <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900/85 text-white backdrop-blur-xs">
+                  ₹${displayPrice.toLocaleString()}
                 </span>
               </div>
               <div class="p-4">
-                <h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">${escapeHtml(prop.title)}</h3>
-                <div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+                <div class="flex items-start justify-between gap-2 mb-1">
+                  <h3 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors leading-snug">${escapeHtml(prop.title)}</h3>
+                  <span class="text-[10px] shrink-0 font-bold px-2 py-0.5 bg-brand-50 text-brand-700 border border-brand-200 rounded-md">
+                    ${escapeHtml(prop.property_type || 'Land')}
+                  </span>
+                </div>
+                <div class="flex items-center text-xs text-slate-500 gap-1.5 mb-2">
                   <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                   <span>${escapeHtml(prop.location)}</span>
+                  ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-[11px] text-emerald-600 font-bold hover:underline flex items-center gap-0.5">Map 📍</a>` : ''}
                 </div>
-                <div class="flex items-center text-xs text-slate-400 gap-2">
-                  <span>${prop.property_type || 'Apartment'}</span>
-                  <span>•</span>
-                  <span>${prop.bedrooms || 1} Bed, ${prop.bathrooms || 1} Bath</span>
-                </div>
+                
+                ${isLand ? `
+                  <div class="bg-purple-50/60 p-2.5 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1 mb-2">
+                    <div class="flex justify-between font-bold text-slate-900">
+                      <span>Area: ${prop.land_area_vigha || 0} Vigha (${prop.land_area_guntha || 0} Guntha)</span>
+                      <span>${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
+                    </div>
+                    <div class="flex justify-between text-[11px] text-slate-500">
+                      <span>7/12: ${escapeHtml(prop.names_in_7_12 || 'N/A')}</span>
+                      <span>Rate: ₹${(prop.price_per_vigha || 0).toLocaleString()}/Vigha</span>
+                    </div>
+                  </div>
+                ` : `
+                  <div class="flex items-center text-xs text-slate-400 gap-2 mb-2">
+                    <span>${prop.bedrooms || 1} Bed, ${prop.bathrooms || 1} Bath</span>
+                  </div>
+                `}
               </div>
             </div>
-            <div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50 text-[11px] text-slate-600 text-center">
-              <div><span class="font-semibold text-slate-900">${prop.images ? prop.images.length : 0}</span> Photos</div>
-              <div><span class="font-semibold text-slate-900">${prop.videos ? prop.videos.length : 0}</span> Videos</div>
-              <div><span class="font-semibold text-brand-600 font-medium">Available</span></div>
+            <div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2 px-2 bg-slate-50/50 text-[11px] text-slate-600 text-center">
+              <div><span class="font-bold text-slate-900">${prop.images ? prop.images.length : 0}</span> Photos</div>
+              <div><span class="font-bold text-slate-900">${prop.videos ? prop.videos.length : 0}</span> Videos</div>
+              <div><span class="font-bold text-emerald-600">Available</span></div>
             </div>
           `;
 

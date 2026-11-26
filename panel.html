@@ -36,7 +36,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
   </style>
   <script>
-    // AUTH PROTECTION: If user is not logged in, redirect to admin.html
+    // AUTH CHECK: Must be logged in to view panel
     if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true") {
       window.location.href = "admin.html";
     }
@@ -48,15 +48,15 @@
     <!-- Top Nav Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between shadow-xs">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shadow-brand-500/30">
+        <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-extrabold text-xl shadow-sm shadow-brand-500/30">
           M
         </div>
         <div>
           <div class="flex items-center gap-2">
             <span class="font-bold text-slate-900 tracking-tight text-base">M&amp;MESTATE</span>
-            <span class="text-[10px] font-semibold bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full border border-brand-200">MANAGEMENT PANEL</span>
+            <span class="text-[10px] font-semibold bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full border border-brand-200">ADMIN CONTROL</span>
           </div>
-          <p class="text-[11px] text-slate-400">Live Supabase Database &amp; Storage Connected</p>
+          <p class="text-[11px] text-slate-400">Land &amp; Property Management • Supabase Cloud</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Properties</p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Catalog Items</p>
             <p id="statTotalProperties" class="text-2xl font-bold text-slate-900 mt-1">0</p>
           </div>
           <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
@@ -89,17 +89,17 @@
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Listings</p>
-            <p id="statActiveListings" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Land Listings</p>
+            <p id="statLandCount" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
           </div>
           <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Photos Uploaded</p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Photos Stored</p>
             <p id="statTotalPhotos" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
           </div>
           <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
@@ -109,7 +109,7 @@
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Videos Uploaded</p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Videos Stored</p>
             <p id="statTotalVideos" class="text-2xl font-bold text-purple-600 mt-1">0</p>
           </div>
           <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -118,95 +118,399 @@
         </div>
       </div>
 
-      <!-- ADD NEW PROPERTY CATALOG SECTION -->
+      <!-- ADD PROPERTY / LAND FORM -->
       <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
         <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
           <div>
             <h2 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Upload &amp; Add New Property Catalog
+              Add Property &amp; Land Catalog
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Upload photos, videos, and property specs. Data syncs live to Supabase Storage &amp; Database.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Fill in any details available (no compulsory fields). All data and media sync directly to Supabase.</p>
           </div>
-          <button type="button" onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-600">Reset Form</button>
+          <button type="button" onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-600 font-medium">Reset Form</button>
         </div>
 
-        <form id="propertyForm" onsubmit="handlePropertySubmit(event)" class="space-y-6">
-          <!-- Basic Info Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Title *</label>
-              <input id="propTitle" type="text" required placeholder="e.g. Star Sun Hotel & Apartment" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+        <form id="propertyForm" onsubmit="handlePropertySubmit(event)" class="space-y-8">
+          
+          <!-- SECTION 1: BASIC INFO & GOOGLE MAPS -->
+          <div class="space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+              1. Basic Information &amp; Location
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Title</label>
+                <input id="propTitle" type="text" placeholder="e.g. 5 Vigha Agricultural Land Near Highway" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Type</label>
+                <select id="propType" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Land (જમીન / પ્લોટ)">Land (જમીન / પ્લોટ)</option>
+                  <option value="Agricultural Land (ખેતીની જમીન)">Agricultural Land (ખેતીની જમીન)</option>
+                  <option value="Commercial Land (કોમર્શિયલ જમીન)">Commercial Land (કોમર્શિયલ જમીન)</option>
+                  <option value="Industrial Land (ઔદ્યોગિક જમીન)">Industrial Land (ઔદ્યોગિક જમીન)</option>
+                  <option value="Farmhouse Land (ફાર્મ હાઉસ)">Farmhouse Land (ફાર્મ હાઉસ)</option>
+                  <option value="Apartment (ફ્લેટ)">Apartment (ફ્લેટ)</option>
+                  <option value="Villa (વિલા)">Villa (વિલા)</option>
+                  <option value="Hotel (હોટેલ)">Hotel (હોટેલ)</option>
+                  <option value="Loft">Loft</option>
+                  <option value="Commercial (દુકાન / ઓફિસ)">Commercial (દુકાન / ઓફિસ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Location / Village / City</label>
+                <input id="propLocation" type="text" placeholder="e.g. Anand, Gujarat, India" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+              </div>
             </div>
 
+            <!-- Google Maps Location Link -->
             <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Type *</label>
-              <select id="propType" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Apartment">Apartment</option>
-                <option value="Villa">Villa</option>
-                <option value="Hotel">Hotel</option>
-                <option value="Loft">Loft</option>
-                <option value="Commercial">Commercial</option>
-                <option value="Penthouse">Penthouse</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Location *</label>
-              <input id="propLocation" type="text" required placeholder="e.g. North Carolina, USA" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-          </div>
-
-          <!-- Specs & Pricing Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Price ($ / INR)</label>
-              <input id="propPrice" type="number" min="0" placeholder="2500" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Price Period</label>
-              <select id="propPricePeriod" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="month">per Month</option>
-                <option value="year">per Year</option>
-                <option value="sale">Total Sale Price</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Listing Status</label>
-              <select id="propStatus" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Active">Active</option>
-                <option value="Pending">Pending</option>
-                <option value="Rented">Rented</option>
-                <option value="Sold">Sold</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Bedrooms / Bathrooms</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input id="propBeds" type="number" min="0" value="2" placeholder="Beds" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
-                <input id="propBaths" type="number" min="0" value="1" placeholder="Baths" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Google Maps Location Link (ગૂગલ મેપ લિંક)</span>
+                <span class="text-[11px] text-slate-400 font-normal">Paste share link from Google Maps</span>
+              </label>
+              <div class="flex gap-2">
+                <div class="relative flex-1">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <input id="propMapLink" type="url" placeholder="https://maps.app.goo.gl/... or https://goo.gl/maps/..." class="w-full pl-10 pr-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" oninput="checkMapLink()"/>
+                </div>
+                <button type="button" id="testMapBtn" onclick="openTestMap()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Test Map</span>
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- Description -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Description</label>
-            <textarea id="propDescription" rows="2" placeholder="Write property features, highlights, and amenities..." class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+          <!-- SECTION 2: TITLE & 7/12 DOCUMENT DETAILS -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+              2. Title &amp; Document Details (૭/૧૨ અને દસ્તાવેજ વિગત)
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Names in 7/12 -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Names in 7/12 (૭/૧૨ માં નામની સંખ્યા)
+                </label>
+                <select id="propNames712" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Not Known / Unspecified">Not Known / Unspecified (માહિતી નથી / નક્કી નથી)</option>
+                  <option value="1 Name">1 Name (૧ નામ)</option>
+                  <option value="2 Names">2 Names (૨ નામ)</option>
+                  <option value="3 Names">3 Names (૩ નામ)</option>
+                  <option value="4 Names">4 Names (૪ નામ)</option>
+                  <option value="5 Names">5 Names (૫ નામ)</option>
+                  <option value="6 Names">6 Names (૬ નામ)</option>
+                  <option value="7 Names">7 Names (૭ નામ)</option>
+                  <option value="8 Names">8 Names (૮ નામ)</option>
+                  <option value="9 Names">9 Names (૯ નામ)</option>
+                  <option value="10 Names">10 Names (૧૦ નામ)</option>
+                  <option value="More than 10 Names">More than 10 Names (૧૦ થી વધુ નામ)</option>
+                </select>
+              </div>
+
+              <!-- Old Documents Available -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Old Documents Available (જૂના દસ્તાવેજ / પેઢીનામું ઉપલબ્ધ છે?)
+                </label>
+                <select id="propOldDocs" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Yes">Yes (હા - જૂના દસ્તાવેજ ઉપલબ્ધ છે)</option>
+                  <option value="No">No (ના - જૂના દસ્તાવેજ ઉપલબ્ધ નથી)</option>
+                  <option value="In Process">In Process (પ્રક્રિયા ચાલુ છે)</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <!-- SMOOTH PHOTO & VIDEO UPLOADER -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                Photos &amp; Videos Uploader (Direct to Supabase Storage) *
-              </label>
-              <span class="text-[11px] text-slate-400">Supported: JPG, PNG, WEBP, MP4, MOV, WEBM</span>
+          <!-- SECTION 3: LOCATION & INFRASTRUCTURE PARAMETERS -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+              3. Location &amp; Infrastructure Parameters (જમીનના પરિમાણો)
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+              <!-- Road Type -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Road Type (રસ્તો)</label>
+                <select id="propRoadType" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Damar (ડામર રોડ)">Damar (ડામર રોડ)</option>
+                  <option value="Cemented (સીસી / સિમેન્ટ)">Cemented (સીસી / સિમેન્ટ રોડ)</option>
+                  <option value="Rough (કાચો રસ્તો)">Rough (કાચો રસ્તો)</option>
+                  <option value="Highway (હાઈવે ટચ)">Highway (હાઈવે ટચ)</option>
+                </select>
+              </div>
+
+              <!-- Front Face Width -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Front Face Width (મોઢું)</label>
+                <select id="propFrontWidth" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Wide (મોટો / પહોળો)">Wide (મોટો / પહોળો ફ્રન્ટ)</option>
+                  <option value="Narrow (સાંકડો)">Narrow (સાંકડો ફ્રન્ટ)</option>
+                </select>
+              </div>
+
+              <!-- Nearest Population -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nearest Population (ગામ/વસ્તી)</label>
+                <select id="propNearestPop" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="< 1 km">&lt; 1 km (૧ કિ.મી. થી ઓછું)</option>
+                  <option value="1 km">1 km</option>
+                  <option value="2 km">2 km</option>
+                  <option value="3 km">3 km</option>
+                  <option value="4 km">4 km</option>
+                  <option value="5 km">5 km</option>
+                  <option value="6 km">6 km</option>
+                  <option value="7 km">7 km</option>
+                  <option value="8 km">8 km</option>
+                  <option value="9 km">9 km</option>
+                  <option value="10 km">10 km</option>
+                  <option value="11 km">11 km</option>
+                  <option value="12 km">12 km</option>
+                  <option value="13 km">13 km</option>
+                  <option value="14 km">14 km</option>
+                  <option value="15 km">15 km</option>
+                  <option value="15+ km">15+ km</option>
+                </select>
+              </div>
+
+              <!-- Road Height from Land -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Road Height (રોડ લેવલ)</label>
+                <select id="propRoadHeight" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Above Land (રોડ જમીનથી ઊંચો છે)">Above Land (રોડ ઊંચો છે)</option>
+                  <option value="Below Land (રોડ જમીનથી નીચો છે)">Below Land (રોડ નીચો છે)</option>
+                  <option value="Same Level (સરખા લેવલમાં છે)">Same Level (સરખા લેવલમાં)</option>
+                </select>
+              </div>
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2">
+              <!-- Fencing -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Fencing (તાર ફેન્સિંગ)</label>
+                <select id="propFencing" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Yes (હા)">Yes (હા - ફેન્સિંગ છે)</option>
+                  <option value="No (ના)">No (ના - ફેન્સિંગ નથી)</option>
+                </select>
+              </div>
+
+              <!-- Light / Electricity -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Light / Electricity (વીજળી)</label>
+                <select id="propLight" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="Yes (હા)">Yes (હા - વીજળી ઉપલબ્ધ છે)</option>
+                  <option value="No (ના)">No (ના - વીજળી નથી)</option>
+                </select>
+              </div>
+
+              <!-- Nearest Muslim Population -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nearest Muslim Population</label>
+                <select id="propMuslimPop" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="None (નથી)">None (નથી)</option>
+                  <option value="1 km">1 km</option>
+                  <option value="2 km">2 km</option>
+                  <option value="3 km">3 km</option>
+                  <option value="4 km">4 km</option>
+                  <option value="5 km">5 km</option>
+                  <option value="6 km">6 km</option>
+                  <option value="7 km">7 km</option>
+                  <option value="8 km">8 km</option>
+                  <option value="9 km">9 km</option>
+                  <option value="10 km">10 km</option>
+                  <option value="10+ km">10+ km</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Water Facilities (Multi-Select Checkboxes) -->
+            <div class="pt-2">
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                Water Facilities (પાણીની સગવડ - Select Multiple)
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="Borewell (બોર)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">Borewell (બોર)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="Well (કૂવો)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">Well (કૂવો)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="River (નદી)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">River (નદી)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="Canal (કેનાલ)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">Canal (કેનાલ)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="Pipeline (પાઈપલાઈન)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">Pipeline</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
+                  <input type="checkbox" name="waterFacility" value="None (કોઈ નહીં)" class="rounded text-brand-600 focus:ring-brand-500"/>
+                  <span class="text-xs font-medium text-slate-700">None</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: SMART GUJARATI LAND AREA & PRICING CONVERTER -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+                4. Smart Land Area &amp; Price Converter (જમીન માપ અને ભાવ કેલ્ક્યુલેટર)
+              </h3>
+              <span class="text-[11px] text-slate-400">૧ વિઘા = ૨૩.૫૦ ગુંઠા | ૧ એકર = ૪૦ ગુંઠા (૧.૭૦૨ વિઘા)</span>
+            </div>
+
+            <!-- Gujarati Measurement Reference Bar -->
+            <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px] text-amber-900 grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div>• ૧ વિઘા = <strong>૨૩.૫૦ ગુંઠા</strong></div>
+              <div>• ૧ વિઘા = <strong>૨૮૪૪ ચો. વાર</strong></div>
+              <div>• ૧ વિઘા = <strong>૨૩૭૮ ચો. મી.</strong></div>
+              <div>• ૧ ગુંઠા = <strong>૧૨૧ ચો. વાર</strong> (૧૦૮૯ ચો. ફૂટ)</div>
+              <div>• ૧ એકર = <strong>૪૦ ગુંઠા</strong></div>
+              <div>• ૧ એકર = <strong>૧.૭૦૨ વિઘા</strong></div>
+              <div>• ૧ એકર = <strong>૪૮૪૦ ચો. વાર</strong></div>
+              <div>• ૧ હેકટર = <strong>૨.૪૭ એકર (૪.૨૧ વિઘા)</strong></div>
+            </div>
+
+            <!-- Two Core Inputs for Instant Calculation -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-purple-50/40 p-5 rounded-2xl border border-purple-100">
+              <!-- Area Input -->
+              <div>
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+                  Enter Land Area (માપ દાખલ કરો)
+                </label>
+                <div class="flex gap-2">
+                  <input id="inputAreaValue" type="number" step="any" min="0" placeholder="e.g. 24" class="w-2/3 px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 font-semibold outline-none" oninput="calculateLand()"/>
+                  <select id="inputAreaUnit" class="w-1/3 px-2 py-2.5 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" onchange="calculateLand()">
+                    <option value="guntha" selected>Guntha (ગુંઠા)</option>
+                    <option value="vigha">Vigha (વિઘા)</option>
+                    <option value="acre">Acre (એકર)</option>
+                    <option value="hectare">Hectare (હેકટર)</option>
+                    <option value="vaar">Sq. Yard (ચો. વાર)</option>
+                    <option value="sqmeter">Sq. Meter (ચો. મી.)</option>
+                    <option value="sqfeet">Sq. Feet (ચો. ફૂટ)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Price Input -->
+              <div>
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+                  Enter Price Rate (ભાવ / કિંમત)
+                </label>
+                <div class="flex gap-2">
+                  <input id="inputPriceValue" type="number" step="any" min="0" placeholder="e.g. 500000" class="w-2/3 px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 font-semibold outline-none" oninput="calculateLand()"/>
+                  <select id="inputPriceType" class="w-1/3 px-2 py-2.5 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" onchange="calculateLand()">
+                    <option value="per_vigha" selected>Per Vigha (વિઘા દીઠ)</option>
+                    <option value="per_guntha">Per Guntha (ગુંઠા દીઠ)</option>
+                    <option value="per_acre">Per Acre (એકર દીઠ)</option>
+                    <option value="per_vaar">Per Vaar (ચો. વાર દીઠ)</option>
+                    <option value="total_price">Total Deal Price (કુલ રકમ)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Auto-Calculated Results Dashboard -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+              <p class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center justify-between">
+                <span>Calculated Land Breakdown in All Units (બધા માપમાં આપોઆપ ગણતરી):</span>
+                <span id="displayTotalPrice" class="text-brand-600 text-sm font-extrabold">Total: ₹0</span>
+              </p>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Vigha (વિઘા)</p>
+                  <p id="calcVigha" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Guntha (ગુંઠા)</p>
+                  <p id="calcGuntha" class="text-sm font-extrabold text-brand-600 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Acre (એકર)</p>
+                  <p id="calcAcre" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Sq. Yard (વાર)</p>
+                  <p id="calcVaar" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Sq. Mtr (ચો.મી.)</p>
+                  <p id="calcSqMtr" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Hectare (હેકટર)</p>
+                  <p id="calcHectare" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <p class="text-[10px] uppercase font-bold text-slate-400">Sq. Feet (ફૂટ)</p>
+                  <p id="calcSqFeet" class="text-sm font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
+              </div>
+
+              <!-- Price Breakdown Rate Cards -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 pt-3 border-t border-slate-100 text-xs">
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <span class="text-slate-500">Rate / Vigha:</span>
+                  <span id="ratePerVigha" class="font-bold text-slate-900">₹0</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <span class="text-slate-500">Rate / Guntha:</span>
+                  <span id="ratePerGuntha" class="font-bold text-slate-900">₹0</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <span class="text-slate-500">Rate / Acre:</span>
+                  <span id="ratePerAcre" class="font-bold text-slate-900">₹0</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <span class="text-slate-500">Rate / Vaar:</span>
+                  <span id="ratePerVaar" class="font-bold text-slate-900">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 5: PROPERTY DESCRIPTION -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+              5. Property Description &amp; Details
+            </h3>
+            <div>
+              <textarea id="propDescription" rows="3" placeholder="Write additional details: crop history, soil type, irrigation, boundary details, seller notes..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- SECTION 6: SMOOTH PHOTO & VIDEO UPLOADER -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50/70 px-3 py-1.5 rounded-lg inline-block">
+                6. Photos &amp; Videos Uploader (Supabase Cloud Storage)
+              </h3>
+              <span class="text-[11px] text-slate-400">Multiple files supported (Images &amp; Videos)</span>
+            </div>
+
+            <!-- Drag & Drop Zone -->
             <div id="dropZone" 
                  ondragover="handleDragOver(event)" 
                  ondragleave="handleDragLeave(event)" 
@@ -219,60 +523,60 @@
                   <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <p class="text-sm font-semibold text-slate-800">
-                  <span class="text-brand-600 underline">Click to upload</span> or drag and drop photos &amp; videos here
+                  <span class="text-brand-600 underline">Click to choose photos &amp; videos</span> or drag and drop here
                 </p>
-                <p class="text-xs text-slate-400">Files upload directly to your high-speed Supabase Storage bucket (property-images)</p>
+                <p class="text-xs text-slate-400">Uploads directly to your Supabase Storage bucket: property-images</p>
               </div>
             </div>
 
-            <!-- Upload Progress Indicator -->
-            <div id="uploadProgressContainer" class="hidden mt-3 p-3 bg-brand-50 border border-brand-200 rounded-xl">
-              <div class="flex items-center justify-between text-xs text-brand-800 mb-1">
-                <span id="uploadStatusText">Uploading files to Supabase Storage...</span>
+            <!-- Upload Progress Bar -->
+            <div id="uploadProgressContainer" class="hidden p-3.5 bg-brand-50 border border-brand-200 rounded-xl">
+              <div class="flex items-center justify-between text-xs text-brand-800 mb-1.5 font-medium">
+                <span id="uploadStatusText">Uploading media to Supabase Storage...</span>
                 <span id="uploadPercentText" class="font-bold">0%</span>
               </div>
-              <div class="w-full bg-brand-200 rounded-full h-2 overflow-hidden">
-                <div id="uploadProgressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+              <div class="w-full bg-brand-200 rounded-full h-2.5 overflow-hidden">
+                <div id="uploadProgressBar" class="bg-brand-600 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
               </div>
             </div>
 
-            <!-- Previews Gallery Grid -->
-            <div id="previewGallery" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+            <!-- Preview Gallery Grid -->
+            <div id="previewGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
           </div>
 
-          <!-- Submit Button -->
-          <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <button id="submitBtn" type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs tracking-wider uppercase rounded-xl shadow-md shadow-brand-500/25 transition flex items-center gap-2">
+          <!-- Submit Bar -->
+          <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+            <button id="submitBtn" type="submit" class="px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs tracking-wider uppercase rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Publish to Catalog</span>
+              <span>Publish Catalog Entry</span>
             </button>
           </div>
         </form>
       </section>
 
-      <!-- LIVE CATALOG PROPERTIES LIST -->
+      <!-- LIVE CATALOG PROPERTIES LIST & FILTER -->
       <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
           <div>
             <h2 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Live Catalog Properties
+              Live Catalog Listings
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Manage existing properties in your database. Changes reflect instantly on the public website.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Manage existing properties. Changes sync to public site immediately.</p>
           </div>
           <button onclick="loadProperties()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Refresh List</span>
+            <span>Refresh Catalog</span>
           </button>
         </div>
 
         <div id="propertiesLoading" class="py-12 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
           <div class="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading properties from Supabase...</span>
+          <span>Loading catalog from Supabase...</span>
         </div>
 
         <div id="propertiesEmpty" class="hidden py-12 text-center text-slate-400 text-xs">
-          No custom properties found in the catalog yet. Use the form above to add your first property!
+          No catalog entries found yet. Use the form above to add your first property or land!
         </div>
 
         <div id="propertiesTableContainer" class="hidden overflow-x-auto">
@@ -281,11 +585,12 @@
               <tr>
                 <th class="py-3 px-4">Preview</th>
                 <th class="py-3 px-4">Title &amp; Type</th>
-                <th class="py-3 px-4">Location</th>
-                <th class="py-3 px-4">Price</th>
+                <th class="py-3 px-4">Area &amp; Price</th>
+                <th class="py-3 px-4">Location / Map</th>
+                <th class="py-3 px-4">7/12 &amp; Road</th>
+                <th class="py-3 px-4">Water / Light</th>
                 <th class="py-3 px-4">Media</th>
-                <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4 text-right">Actions</th>
+                <th class="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
             <tbody id="propertiesTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
@@ -303,7 +608,7 @@
   </div>
 
   <script>
-    // SUPABASE CONFIGURATION
+    // SUPABASE CLIENT
     const SUPABASE_URL = "https://ctvjxpqeqajnqpdznzdy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmp4cHFlcWFqbnFwZHpuemR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NjU1MDksImV4cCI6MjExMTI0MTUwOX0.A2-MsIHBjLb4QtrTOyMEglypVORIlcySYZBUaoXcjlk";
     const BUCKET_NAME = "property-images";
@@ -312,13 +617,176 @@
 
     let selectedMediaFiles = [];
 
+    // GUJARATI CONVERSION FORMULAS (EXACT AS SPECIFIED BY USER)
+    // 1 Vigha = 23.50 Guntha
+    // 1 Vigha = 2378 Sq. Mtr
+    // 1 Vigha = 2844 Vaar (Sq. Yard)
+    // 1 Guntha = 121 Vaar
+    // 1 Acre = 40 Guntha (1.702 Vigha)
+    // 1 Acre = 4840 Vaar
+    // 1 Sq. Mtr = 1.196 Vaar
+    // 1 Vaar = 9 Sq. Feet
+    // 1 Hectare = 2.47 Acre (4.21 Vigha, 10000 Sq. Mtr)
+    const GUNTHA_PER_VIGHA = 23.50;
+    const VAAR_PER_GUNTHA = 121.0;
+    const SQFEET_PER_VAAR = 9.0;
+    const GUNTHA_PER_ACRE = 40.0;
+    const SQMTR_PER_VIGHA = 2378.0;
+    const SQMTR_PER_GUNTHA = SQMTR_PER_VIGHA / GUNTHA_PER_VIGHA; // ~101.1915
+    const GUNTHA_PER_HECTARE = 4.21 * GUNTHA_PER_VIGHA; // ~98.935
+
+    let currentCalculatedArea = {
+      guntha: 0,
+      vigha: 0,
+      acre: 0,
+      vaar: 0,
+      sqmtr: 0,
+      hectare: 0,
+      sqfeet: 0,
+      totalPrice: 0,
+      pricePerVigha: 0,
+      pricePerGuntha: 0,
+      pricePerAcre: 0,
+      pricePerVaar: 0
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
+      calculateLand();
       loadProperties();
     });
 
     function logoutAdmin() {
       sessionStorage.removeItem("mmestate_admin_authenticated");
       window.location.href = "admin.html";
+    }
+
+    // SMART LAND & PRICE CALCULATOR
+    function calculateLand() {
+      const areaVal = parseFloat(document.getElementById("inputAreaValue").value) || 0;
+      const areaUnit = document.getElementById("inputAreaUnit").value;
+      const priceVal = parseFloat(document.getElementById("inputPriceValue").value) || 0;
+      const priceType = document.getElementById("inputPriceType").value;
+
+      // 1. Convert Input Area to base unit: GUNTHA
+      let baseGuntha = 0;
+      if (areaUnit === 'guntha') {
+        baseGuntha = areaVal;
+      } else if (areaUnit === 'vigha') {
+        baseGuntha = areaVal * GUNTHA_PER_VIGHA;
+      } else if (areaUnit === 'acre') {
+        baseGuntha = areaVal * GUNTHA_PER_ACRE;
+      } else if (areaUnit === 'hectare') {
+        baseGuntha = areaVal * GUNTHA_PER_HECTARE;
+      } else if (areaUnit === 'vaar') {
+        baseGuntha = areaVal / VAAR_PER_GUNTHA;
+      } else if (areaUnit === 'sqmeter') {
+        baseGuntha = areaVal / SQMTR_PER_GUNTHA;
+      } else if (areaUnit === 'sqfeet') {
+        baseGuntha = (areaVal / SQFEET_PER_VAAR) / VAAR_PER_GUNTHA;
+      }
+
+      // 2. Convert baseGuntha into all other units
+      const vigha = baseGuntha / GUNTHA_PER_VIGHA;
+      const acre = baseGuntha / GUNTHA_PER_ACRE;
+      const vaar = baseGuntha * VAAR_PER_GUNTHA;
+      const sqfeet = vaar * SQFEET_PER_VAAR;
+      const sqmtr = baseGuntha * SQMTR_PER_GUNTHA;
+      const hectare = baseGuntha / GUNTHA_PER_HECTARE;
+
+      // 3. Price Calculations
+      let totalPrice = 0;
+      let pricePerVigha = 0;
+      let pricePerGuntha = 0;
+      let pricePerAcre = 0;
+      let pricePerVaar = 0;
+
+      if (priceVal > 0) {
+        if (priceType === 'per_vigha') {
+          pricePerVigha = priceVal;
+          pricePerGuntha = priceVal / GUNTHA_PER_VIGHA;
+          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
+          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
+          totalPrice = vigha * pricePerVigha;
+        } else if (priceType === 'per_guntha') {
+          pricePerGuntha = priceVal;
+          pricePerVigha = priceVal * GUNTHA_PER_VIGHA;
+          pricePerAcre = priceVal * GUNTHA_PER_ACRE;
+          pricePerVaar = priceVal / VAAR_PER_GUNTHA;
+          totalPrice = baseGuntha * pricePerGuntha;
+        } else if (priceType === 'per_acre') {
+          pricePerAcre = priceVal;
+          pricePerGuntha = priceVal / GUNTHA_PER_ACRE;
+          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
+          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
+          totalPrice = acre * pricePerAcre;
+        } else if (priceType === 'per_vaar') {
+          pricePerVaar = priceVal;
+          pricePerGuntha = priceVal * VAAR_PER_GUNTHA;
+          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
+          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
+          totalPrice = vaar * pricePerVaar;
+        } else if (priceType === 'total_price') {
+          totalPrice = priceVal;
+          if (vigha > 0) pricePerVigha = totalPrice / vigha;
+          if (baseGuntha > 0) pricePerGuntha = totalPrice / baseGuntha;
+          if (acre > 0) pricePerAcre = totalPrice / acre;
+          if (vaar > 0) pricePerVaar = totalPrice / vaar;
+        }
+      }
+
+      currentCalculatedArea = {
+        guntha: round(baseGuntha, 3),
+        vigha: round(vigha, 3),
+        acre: round(acre, 3),
+        vaar: round(vaar, 2),
+        sqmtr: round(sqmtr, 2),
+        hectare: round(hectare, 3),
+        sqfeet: round(sqfeet, 1),
+        totalPrice: Math.round(totalPrice),
+        pricePerVigha: Math.round(pricePerVigha),
+        pricePerGuntha: Math.round(pricePerGuntha),
+        pricePerAcre: Math.round(pricePerAcre),
+        pricePerVaar: Math.round(pricePerVaar)
+      };
+
+      // Update DOM
+      document.getElementById("calcVigha").innerText = currentCalculatedArea.vigha;
+      document.getElementById("calcGuntha").innerText = currentCalculatedArea.guntha;
+      document.getElementById("calcAcre").innerText = currentCalculatedArea.acre;
+      document.getElementById("calcVaar").innerText = currentCalculatedArea.vaar.toLocaleString();
+      document.getElementById("calcSqMtr").innerText = currentCalculatedArea.sqmtr.toLocaleString();
+      document.getElementById("calcHectare").innerText = currentCalculatedArea.hectare;
+      document.getElementById("calcSqFeet").innerText = currentCalculatedArea.sqfeet.toLocaleString();
+
+      document.getElementById("displayTotalPrice").innerText = "Total: ₹" + currentCalculatedArea.totalPrice.toLocaleString();
+      document.getElementById("ratePerVigha").innerText = "₹" + currentCalculatedArea.pricePerVigha.toLocaleString();
+      document.getElementById("ratePerGuntha").innerText = "₹" + currentCalculatedArea.pricePerGuntha.toLocaleString();
+      document.getElementById("ratePerAcre").innerText = "₹" + currentCalculatedArea.pricePerAcre.toLocaleString();
+      document.getElementById("ratePerVaar").innerText = "₹" + currentCalculatedArea.pricePerVaar.toLocaleString();
+    }
+
+    function round(num, decimals) {
+      const factor = Math.pow(10, decimals);
+      return Math.round((num + Number.EPSILON) * factor) / factor;
+    }
+
+    // GOOGLE MAP LINK HELPERS
+    function checkMapLink() {
+      const link = document.getElementById("propMapLink").value.trim();
+      const btn = document.getElementById("testMapBtn");
+      if (link && link.includes("http")) {
+        btn.classList.remove("text-slate-700", "bg-slate-100");
+        btn.classList.add("text-emerald-700", "bg-emerald-50", "border", "border-emerald-200");
+      }
+    }
+
+    function openTestMap() {
+      const link = document.getElementById("propMapLink").value.trim();
+      if (!link) {
+        showToast("Please paste a Google Maps link first", "error");
+        return;
+      }
+      window.open(link, "_blank");
     }
 
     // DRAG AND DROP
@@ -401,14 +869,9 @@
       });
     }
 
-    // FORM SUBMISSION (UPLOAD TO SUPABASE STORAGE & INSERT DATABASE ROW)
+    // FORM SUBMISSION: NO COMPULSORY FIELDS (Publish with any information)
     async function handlePropertySubmit(e) {
       e.preventDefault();
-
-      if (selectedMediaFiles.length === 0) {
-        showToast("Please upload at least one photo or video for this property.", "error");
-        return;
-      }
 
       const submitBtn = document.getElementById("submitBtn");
       const progressContainer = document.getElementById("uploadProgressContainer");
@@ -418,61 +881,91 @@
 
       submitBtn.disabled = true;
       submitBtn.classList.add("opacity-50", "cursor-not-allowed");
-      progressContainer.classList.remove("hidden");
 
       const uploadedImageUrls = [];
       const uploadedVideoUrls = [];
 
       try {
-        const total = selectedMediaFiles.length;
+        // Upload any media files if attached
+        if (selectedMediaFiles.length > 0) {
+          progressContainer.classList.remove("hidden");
+          const total = selectedMediaFiles.length;
 
-        for (let i = 0; i < total; i++) {
-          const item = selectedMediaFiles[i];
-          const file = item.file;
-          const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const filePath = `properties/${Date.now()}_${cleanName}`;
+          for (let i = 0; i < total; i++) {
+            const item = selectedMediaFiles[i];
+            const file = item.file;
+            const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+            const filePath = `properties/${Date.now()}_${cleanName}`;
 
-          statusText.innerText = `Uploading ${i + 1} of ${total}: ${file.name}...`;
-          const percent = Math.round(((i) / total) * 100);
-          progressBar.style.width = `${percent}%`;
-          percentText.innerText = `${percent}%`;
+            statusText.innerText = `Uploading ${i + 1} of ${total}: ${file.name}...`;
+            const percent = Math.round(((i) / total) * 100);
+            progressBar.style.width = `${percent}%`;
+            percentText.innerText = `${percent}%`;
 
-          // Upload to Supabase Storage
-          const { data, error } = await supabase.storage
-            .from(BUCKET_NAME)
-            .upload(filePath, file, { cacheControl: '3600', upsert: true });
+            const { data, error } = await supabase.storage
+              .from(BUCKET_NAME)
+              .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
-          if (error) {
-            console.error("Storage upload error:", error);
-            throw new Error(`Failed to upload ${file.name}: ${error.message}`);
+            if (error) {
+              console.error("Storage upload error:", error);
+              throw new Error(`Failed to upload ${file.name}: ${error.message}`);
+            }
+
+            const { data: urlData } = supabase.storage
+              .from(BUCKET_NAME)
+              .getPublicUrl(filePath);
+
+            if (item.type === 'image') {
+              uploadedImageUrls.push(urlData.publicUrl);
+            } else {
+              uploadedVideoUrls.push(urlData.publicUrl);
+            }
           }
 
-          // Get Public URL
-          const { data: urlData } = supabase.storage
-            .from(BUCKET_NAME)
-            .getPublicUrl(filePath);
-
-          if (item.type === 'image') {
-            uploadedImageUrls.push(urlData.publicUrl);
-          } else {
-            uploadedVideoUrls.push(urlData.publicUrl);
-          }
+          progressBar.style.width = `100%`;
+          percentText.innerText = `100%`;
+          statusText.innerText = "Saving to Supabase Database...";
         }
 
-        progressBar.style.width = `100%`;
-        percentText.innerText = `100%`;
-        statusText.innerText = "Saving property to Supabase Database...";
+        // Get selected water facilities (multi-select)
+        const waterCheckboxes = document.querySelectorAll('input[name="waterFacility"]:checked');
+        const waterFacilities = Array.from(waterCheckboxes).map(cb => cb.value);
+
+        // Gather all inputs (no compulsory requirement)
+        const titleVal = document.getElementById("propTitle").value.trim() || "Untitled Property";
+        const typeVal = document.getElementById("propType").value;
+        const locationVal = document.getElementById("propLocation").value.trim() || "Gujarat, India";
 
         const propertyPayload = {
-          title: document.getElementById("propTitle").value.trim(),
-          property_type: document.getElementById("propType").value,
-          location: document.getElementById("propLocation").value.trim(),
-          price: parseFloat(document.getElementById("propPrice").value) || 0,
-          price_period: document.getElementById("propPricePeriod").value,
-          status: document.getElementById("propStatus").value,
-          bedrooms: parseInt(document.getElementById("propBeds").value) || 1,
-          bathrooms: parseInt(document.getElementById("propBaths").value) || 1,
+          title: titleVal,
+          property_type: typeVal,
+          location: locationVal,
+          google_maps_link: document.getElementById("propMapLink").value.trim(),
+          names_in_7_12: document.getElementById("propNames712").value,
+          old_documents_available: document.getElementById("propOldDocs").value,
+          road_type: document.getElementById("propRoadType").value,
+          front_face_width: document.getElementById("propFrontWidth").value,
+          nearest_population: document.getElementById("propNearestPop").value,
+          road_height_from_land: document.getElementById("propRoadHeight").value,
+          fencing: document.getElementById("propFencing").value,
+          light_electricity: document.getElementById("propLight").value,
+          nearest_muslim_population: document.getElementById("propMuslimPop").value,
+          water_facilities: waterFacilities,
           description: document.getElementById("propDescription").value.trim(),
+
+          // Calculated Land and Price Fields
+          land_area_guntha: currentCalculatedArea.guntha,
+          land_area_vigha: currentCalculatedArea.vigha,
+          land_area_acre: currentCalculatedArea.acre,
+          land_area_sq_yard: currentCalculatedArea.vaar,
+          land_area_sq_meter: currentCalculatedArea.sqmtr,
+          land_area_hectare: currentCalculatedArea.hectare,
+          price_per_vigha: currentCalculatedArea.pricePerVigha,
+          price_per_guntha: currentCalculatedArea.pricePerGuntha,
+          total_price: currentCalculatedArea.totalPrice,
+          price: currentCalculatedArea.totalPrice,
+          price_period: 'total',
+
           images: uploadedImageUrls,
           videos: uploadedVideoUrls
         };
@@ -486,13 +979,13 @@
           throw new Error(`Database error: ${dbError.message}`);
         }
 
-        showToast("Property published successfully to catalog!", "success");
+        showToast("Property catalog entry published successfully!", "success");
         resetForm();
         loadProperties();
 
       } catch (err) {
         console.error("Submission failed:", err);
-        showToast(err.message || "Failed to publish property", "error");
+        showToast(err.message || "Failed to publish", "error");
       } finally {
         submitBtn.disabled = false;
         submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
@@ -504,6 +997,7 @@
       document.getElementById("propertyForm").reset();
       selectedMediaFiles = [];
       renderMediaPreviews();
+      calculateLand();
     }
 
     // LOAD PROPERTIES FROM SUPABASE
@@ -525,9 +1019,7 @@
 
         loading.classList.add("hidden");
 
-        if (error) {
-          throw new Error(error.message);
-        }
+        if (error) throw new Error(error.message);
 
         updateStats(properties || []);
 
@@ -545,10 +1037,11 @@
 
           const primaryImage = (prop.images && prop.images.length > 0) 
             ? prop.images[0] 
-            : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=300&q=80';
+            : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80';
 
           const photoCount = prop.images ? prop.images.length : 0;
           const videoCount = prop.videos ? prop.videos.length : 0;
+          const mapLink = prop.google_maps_link;
 
           tr.innerHTML = `
             <td class="py-3 px-4">
@@ -556,24 +1049,35 @@
             </td>
             <td class="py-3 px-4">
               <p class="font-bold text-slate-900">${escapeHtml(prop.title)}</p>
-              <span class="text-[11px] text-brand-600 font-medium">${escapeHtml(prop.property_type)}</span>
+              <span class="text-[11px] text-brand-600 font-semibold">${escapeHtml(prop.property_type)}</span>
+            </td>
+            <td class="py-3 px-4">
+              <p class="font-bold text-slate-900">₹${(prop.total_price || prop.price || 0).toLocaleString()}</p>
+              <p class="text-[11px] text-slate-500 font-medium">
+                ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha (${prop.land_area_guntha} Guntha)` : 'Custom Size'}
+              </p>
             </td>
             <td class="py-3 px-4 text-slate-600">
-              ${escapeHtml(prop.location)}
+              <p>${escapeHtml(prop.location)}</p>
+              ${mapLink ? `
+                <a href="${escapeHtml(mapLink)}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold hover:underline mt-0.5">
+                  <span>Google Map 📍</span>
+                </a>
+              ` : ''}
             </td>
-            <td class="py-3 px-4 font-semibold text-slate-900">
-              $${prop.price.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">/${prop.price_period}</span>
+            <td class="py-3 px-4 text-[11px] text-slate-600">
+              <p><span class="font-semibold">7/12:</span> ${escapeHtml(prop.names_in_7_12 || 'N/A')}</p>
+              <p><span class="font-semibold">Road:</span> ${escapeHtml(prop.road_type || 'N/A')}</p>
+            </td>
+            <td class="py-3 px-4 text-[11px] text-slate-600">
+              <p><span class="font-semibold">Water:</span> ${prop.water_facilities && prop.water_facilities.length > 0 ? prop.water_facilities.join(', ') : 'None'}</p>
+              <p><span class="font-semibold">Light:</span> ${escapeHtml(prop.light_electricity || 'Yes')}</p>
             </td>
             <td class="py-3 px-4">
               <div class="flex items-center gap-1.5 text-[11px]">
-                <span class="px-2 py-0.5 bg-slate-100 rounded text-slate-600 font-medium">${photoCount} 📷</span>
-                ${videoCount > 0 ? `<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">${videoCount} 🎥</span>` : ''}
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-semibold">${photoCount} 📷</span>
+                ${videoCount > 0 ? `<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-semibold">${videoCount} 🎥</span>` : ''}
               </div>
-            </td>
-            <td class="py-3 px-4">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${getStatusBadge(prop.status)}">
-                ${prop.status}
-              </span>
             </td>
             <td class="py-3 px-4 text-right">
               <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Delete Property">
@@ -588,13 +1092,13 @@
       } catch (err) {
         loading.classList.add("hidden");
         console.error("Error loading properties:", err);
-        showToast("Error loading properties: " + err.message, "error");
+        showToast("Error loading catalog: " + err.message, "error");
       }
     }
 
     function updateStats(properties) {
       document.getElementById("statTotalProperties").innerText = properties.length;
-      document.getElementById("statActiveListings").innerText = properties.filter(p => p.status === 'Active').length;
+      document.getElementById("statLandCount").innerText = properties.filter(p => (p.property_type || '').toLowerCase().includes('land')).length;
 
       let totalPhotos = 0;
       let totalVideos = 0;
@@ -607,20 +1111,8 @@
       document.getElementById("statTotalVideos").innerText = totalVideos;
     }
 
-    function getStatusBadge(status) {
-      switch (status) {
-        case 'Active': return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
-        case 'Pending': return 'bg-amber-50 text-amber-700 border border-amber-200';
-        case 'Rented': return 'bg-blue-50 text-blue-700 border border-blue-200';
-        case 'Sold': return 'bg-slate-100 text-slate-600 border border-slate-200';
-        default: return 'bg-slate-100 text-slate-600';
-      }
-    }
-
     async function deleteProperty(id, title) {
-      if (!confirm(`Are you sure you want to delete "${title}" from the catalog?`)) {
-        return;
-      }
+      if (!confirm(`Are you sure you want to delete "${title}" from the catalog?`)) return;
 
       try {
         const { error } = await supabase.from("properties").delete().eq("id", id);
