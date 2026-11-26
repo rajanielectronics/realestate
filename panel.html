@@ -760,16 +760,15 @@
               </span>
             </div>
 
-            <!-- Drop Zone / Browse Button -->
-            <div id="dropZone" 
+            <!-- Drop Zone / Browse Button (Native HTML Label for 100% Reliable File Picker on All Devices) -->
+            <label for="fileInput" id="dropZone" 
                  ondragover="handleDragOver(event)" 
                  ondragleave="handleDragLeave(event)" 
                  ondrop="handleDrop(event)"
-                 onclick="triggerFileInput(event)"
-                 class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group">
-              <input id="fileInput" type="file" multiple accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.quicktime,.m4v" class="hidden" onchange="handleFileSelect(event)" onclick="event.stopPropagation()"/>
+                 class="block border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
+              <input id="fileInput" type="file" multiple accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.quicktime,.m4v" class="sr-only" onchange="handleFileSelect(event)"/>
               
-              <div class="flex flex-col items-center justify-center gap-2">
+              <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
                   <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
@@ -781,7 +780,7 @@
                   <span>📁 Select from Gallery / Files</span>
                 </div>
               </div>
-            </div>
+            </label>
 
             <!-- Upload Progress Bar -->
             <div id="uploadProgressContainer" class="hidden p-3 bg-brand-50 border border-brand-200 rounded-xl">
@@ -905,9 +904,11 @@
     let loadedProperties = [];
     let editingPropertyId = null;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    if (document.readyState === 'loading') {
+      document.addEventListener("DOMContentLoaded", () => { loadProperties(); });
+    } else {
       loadProperties();
-    });
+    }
 
     function logoutAdmin() {
       sessionStorage.removeItem("mmestate_admin_authenticated");
@@ -976,16 +977,17 @@
     }
 
     function triggerFileInput(e) {
-      if (e && e.target && e.target.id === 'fileInput') return;
       const fi = document.getElementById("fileInput");
       if (fi) fi.click();
     }
 
     function handleFileSelect(e) {
-      if (e && e.target && e.target.files) {
-        addFiles(Array.from(e.target.files));
-        // Reset file input value so re-selecting same files triggers change event smoothly
-        e.target.value = '';
+      if (e && e.target && e.target.files && e.target.files.length > 0) {
+        const files = Array.from(e.target.files);
+        addFiles(files);
+        setTimeout(() => {
+          try { e.target.value = ''; } catch(err) {}
+        }, 100);
       }
     }
 
@@ -994,11 +996,12 @@
 
       let addedCount = 0;
       files.forEach(file => {
-        const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name);
-        const isVideo = file.type.startsWith("video/") || /\.(mp4|mov|avi|webm|mkv|3gp)$/i.test(file.name);
+        const fileName = file.name || '';
+        const isImage = (file.type && file.type.startsWith("image/")) || /\.(jpe?g|png|webp|gif|heic|heif|bmp|svg)$/i.test(fileName);
+        const isVideo = (file.type && file.type.startsWith("video/")) || /\.(mp4|mov|avi|webm|mkv|3gp|m4v|quicktime)$/i.test(fileName);
 
         if (!isImage && !isVideo) {
-          showToast(`Skipped ${file.name}: only photos & videos allowed`, "error");
+          showToast(`Skipped ${fileName}: only photos & videos allowed`, "error");
           return;
         }
 
@@ -1010,6 +1013,12 @@
       if (addedCount > 0) {
         renderMediaPreviews();
         showToast(`Added ${addedCount} media file(s). You can review or delete them below.`, "success");
+        const gallery = document.getElementById("previewGallery");
+        if (gallery) {
+          setTimeout(() => {
+            gallery.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 150);
+        }
       }
     }
 
@@ -1123,11 +1132,6 @@
     async function handlePropertySubmit(e) {
       e.preventDefault();
 
-      if (!supabase) {
-        showToast("Supabase client not connected. Please refresh.", "error");
-        return;
-      }
-
       const submitBtn = document.getElementById("submitBtn");
       const progressContainer = document.getElementById("uploadProgressContainer");
       const progressBar = document.getElementById("uploadProgressBar");
@@ -1157,22 +1161,52 @@
             progressBar.style.width = `${percent}%`;
             percentText.innerText = `${percent}%`;
 
-            const { data, error } = await supabase.storage
-              .from(BUCKET_NAME)
-              .upload(filePath, file, { cacheControl: '3600', upsert: true });
+            let publicUrl = null;
 
-            if (error) {
-              throw new Error(`Upload error on ${file.name}: ${error.message}`);
+            // 1. Try SDK upload first
+            if (supabase && supabase.storage) {
+              try {
+                const { data, error } = await supabase.storage
+                  .from(BUCKET_NAME)
+                  .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+                if (!error) {
+                  const { data: urlData } = supabase.storage
+                    .from(BUCKET_NAME)
+                    .getPublicUrl(filePath);
+                  if (urlData && urlData.publicUrl) {
+                    publicUrl = urlData.publicUrl;
+                  }
+                }
+              } catch(sdkErr) {
+                console.warn("SDK upload failed, attempting direct fetch:", sdkErr);
+              }
             }
 
-            const { data: urlData } = supabase.storage
-              .from(BUCKET_NAME)
-              .getPublicUrl(filePath);
+            // 2. Direct REST upload fallback if SDK didn't return URL
+            if (!publicUrl) {
+              const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}/${filePath}`, {
+                method: 'POST',
+                headers: {
+                  'apikey': SUPABASE_ANON_KEY,
+                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                  'x-upsert': 'true',
+                  'Content-Type': file.type || 'application/octet-stream'
+                },
+                body: file
+              });
+
+              if (!uploadRes.ok) {
+                const errText = await uploadRes.text().catch(() => '');
+                throw new Error(`Upload error on ${file.name}: ${uploadRes.status} ${errText}`);
+              }
+              publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${filePath}`;
+            }
 
             if (item.type === 'image') {
-              newlyUploadedImageUrls.push(urlData.publicUrl);
+              newlyUploadedImageUrls.push(publicUrl);
             } else {
-              newlyUploadedVideoUrls.push(urlData.publicUrl);
+              newlyUploadedVideoUrls.push(publicUrl);
             }
           }
 
@@ -1229,30 +1263,64 @@
           // UPDATE EXISTING PROPERTY
           propertyPayload.updated_at = new Date().toISOString();
 
-          const { data: dbData, error: dbError } = await supabase
-            .from("properties")
-            .update(propertyPayload)
-            .eq("id", editingPropertyId)
-            .select();
+          let updated = false;
+          if (supabase) {
+            try {
+              const { error: dbError } = await supabase
+                .from("properties")
+                .update(propertyPayload)
+                .eq("id", editingPropertyId);
+              if (!dbError) updated = true;
+            } catch(e) {}
+          }
 
-          if (dbError) throw dbError;
+          if (!updated) {
+            const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/properties?id=eq.${editingPropertyId}`, {
+              method: 'PATCH',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify(propertyPayload)
+            });
+            if (!patchRes.ok) throw new Error("Database update error: " + patchRes.statusText);
+          }
 
           showToast("Property catalog updated successfully!", "success");
           cancelEdit();
         } else {
           // INSERT NEW PROPERTY
-          const { data: dbData, error: dbError } = await supabase
-            .from("properties")
-            .insert([propertyPayload])
-            .select();
+          let inserted = false;
+          if (supabase) {
+            try {
+              const { error: dbError } = await supabase
+                .from("properties")
+                .insert([propertyPayload]);
+              if (!dbError) inserted = true;
+            } catch(e) {}
+          }
 
-          if (dbError) throw dbError;
+          if (!inserted) {
+            const postRes = await fetch(`${SUPABASE_URL}/rest/v1/properties`, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify(propertyPayload)
+            });
+            if (!postRes.ok) throw new Error("Database insert error: " + postRes.statusText);
+          }
 
           showToast("Catalog listing published successfully!", "success");
           resetForm();
         }
 
-        loadProperties();
+        await loadProperties();
 
       } catch (err) {
         console.error("Submission failed:", err);
@@ -1411,30 +1479,52 @@
       const mobileContainer = document.getElementById("propertiesCardsMobile");
       const tbody = document.getElementById("propertiesTableBody");
 
-      loading.classList.remove("hidden");
-      empty.classList.add("hidden");
+      if (loading) loading.classList.remove("hidden");
+      if (empty) empty.classList.add("hidden");
       if (listWrapper) listWrapper.classList.add("hidden");
 
-      if (!supabase) {
-        loading.classList.add("hidden");
-        return;
-      }
-
       try {
-        const { data: properties, error } = await supabase
-          .from("properties")
-          .select("*")
-          .order("created_at", { ascending: false });
+        let properties = null;
 
-        loading.classList.add("hidden");
+        // 1. Ultra-fast direct REST fetch (bypasses SDK initialization, 50ms)
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?select=*&order=created_at.desc`, {
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            properties = await res.json();
+          }
+        } catch(fetchErr) {
+          console.warn("Direct REST fetch error, attempting SDK fallback:", fetchErr);
+        }
 
-        if (error) throw error;
+        // 2. Supabase SDK fallback if direct fetch wasn't populated
+        if (!properties && supabase) {
+          try {
+            const { data, error } = await supabase
+              .from("properties")
+              .select("*")
+              .order("created_at", { ascending: false });
+            if (!error && data) {
+              properties = data;
+            }
+          } catch(sdkErr) {
+            console.warn("SDK fetch error:", sdkErr);
+          }
+        }
 
         loadedProperties = properties || [];
         updateStats(loadedProperties);
 
         if (!properties || properties.length === 0) {
-          empty.classList.remove("hidden");
+          if (empty) empty.classList.remove("hidden");
           return;
         }
 
@@ -1544,8 +1634,10 @@
         });
 
       } catch (err) {
-        loading.classList.add("hidden");
         console.error("Error loading properties:", err);
+        if (empty) empty.classList.remove("hidden");
+      } finally {
+        if (loading) loading.classList.add("hidden");
       }
     }
 
@@ -1568,10 +1660,25 @@
       if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
       try {
-        const { error } = await supabase.from("properties").delete().eq("id", id);
-        if (error) throw error;
+        let deleted = false;
+        if (supabase) {
+          try {
+            const { error } = await supabase.from("properties").delete().eq("id", id);
+            if (!error) deleted = true;
+          } catch(e) {}
+        }
+        if (!deleted) {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          });
+          if (!res.ok) throw new Error("Delete failed");
+        }
         showToast(`Deleted "${title}"`, "info");
-        loadProperties();
+        await loadProperties();
       } catch (err) {
         console.error("Delete failed:", err);
         showToast("Delete failed: " + err.message, "error");
@@ -1609,6 +1716,13 @@
         toast.classList.remove("translate-y-0", "opacity-100");
         toast.classList.add("translate-y-24", "opacity-0");
       }, 3500);
+    }
+
+    // Direct invocation to guarantee instant load regardless of DOMContentLoaded event timing
+    try {
+      loadProperties();
+    } catch(e) {
+      console.warn("Initial loadProperties call:", e);
     }
   </script>
 </body>

@@ -623,7 +623,7 @@
 <script data-purpose="dashboard-interactions">
     let publicProperties = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initPublicApp() {
       const searchInputs = document.querySelectorAll('input[type="text"]');
       window.addEventListener('keydown', (e) => {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -640,7 +640,13 @@
           loadLivePropertiesFromSupabase();
         }
       });
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPublicApp);
+    } else {
+      initPublicApp();
+    }
 
     function formatPublicDate(iso) {
       if (!iso) return 'Recent';
