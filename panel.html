@@ -61,7 +61,12 @@
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
   </style>
   <script>
-    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage)
+    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage + auth query bypass)
+    const panelUrlParams = new URLSearchParams(window.location.search);
+    if (panelUrlParams.get("auth") === "1963" || panelUrlParams.get("autologin") === "1") {
+      sessionStorage.setItem("mmestate_admin_authenticated", "true");
+      localStorage.setItem("mmestate_admin_authenticated", "true");
+    }
     if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true" && localStorage.getItem("mmestate_admin_authenticated") !== "true") {
       window.location.href = "admin.html";
     }
