@@ -907,10 +907,10 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmp4cHFlcWFqbnFwZHpuemR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NjU1MDksImV4cCI6MjExMTI0MTUwOX0.A2-MsIHBjLb4QtrTOyMEglypVORIlcySYZBUaoXcjlk";
     const BUCKET_NAME = "property-images";
 
-    let supabase = null;
+    let sbClient = null;
     try {
-      if (window.supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
     } catch(e) {
       console.warn("Supabase init error:", e);
@@ -1208,14 +1208,14 @@
             let publicUrl = null;
 
             // 1. Try SDK upload first
-            if (supabase && supabase.storage) {
+            if (sbClient && sbClient.storage) {
               try {
-                const { data, error } = await supabase.storage
+                const { data, error } = await sbClient.storage
                   .from(BUCKET_NAME)
                   .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
                 if (!error) {
-                  const { data: urlData } = supabase.storage
+                  const { data: urlData } = sbClient.storage
                     .from(BUCKET_NAME)
                     .getPublicUrl(filePath);
                   if (urlData && urlData.publicUrl) {
@@ -1308,9 +1308,9 @@
           propertyPayload.updated_at = new Date().toISOString();
 
           let updated = false;
-          if (supabase) {
+          if (sbClient) {
             try {
-              const { error: dbError } = await supabase
+              const { error: dbError } = await sbClient
                 .from("properties")
                 .update(propertyPayload)
                 .eq("id", editingPropertyId);
@@ -1337,9 +1337,9 @@
         } else {
           // INSERT NEW PROPERTY
           let inserted = false;
-          if (supabase) {
+          if (sbClient) {
             try {
-              const { error: dbError } = await supabase
+              const { error: dbError } = await sbClient
                 .from("properties")
                 .insert([propertyPayload]);
               if (!dbError) inserted = true;
@@ -1547,9 +1547,9 @@
         }
 
         // 2. Supabase SDK fallback if direct fetch wasn't populated
-        if (!properties && supabase) {
+        if (!properties && sbClient) {
           try {
-            const { data, error } = await supabase
+            const { data, error } = await sbClient
               .from("properties")
               .select("*")
               .order("created_at", { ascending: false });
@@ -1750,9 +1750,9 @@
 
       try {
         let deleted = false;
-        if (supabase) {
+        if (sbClient) {
           try {
-            const { error } = await supabase.from("properties").delete().eq("id", id);
+            const { error } = await sbClient.from("properties").delete().eq("id", id);
             if (!error) deleted = true;
           } catch(e) {}
         }
