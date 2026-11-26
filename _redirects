@@ -1,1 +1,4 @@
-/admin    /admin.html    200
+/admin        /admin.html     200
+/login        /admin.html     200
+/panel        /panel.html     200
+/dashboard    /panel.html     200

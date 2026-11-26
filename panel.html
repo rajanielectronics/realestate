@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>M&MESTATE - Property Management Dashboard</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F5F3FF',
+              100: '#EDE9FE',
+              500: '#8B5CF6',
+              600: '#7C3AED',
+              700: '#6D28D9',
+              900: '#4C1D95'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F3F4F6; }
+    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+  </style>
+  <script>
+    // AUTH PROTECTION: If user is not logged in, redirect to admin.html
+    if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true") {
+      window.location.href = "admin.html";
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen font-sans">
+
+  <div class="min-h-screen flex flex-col">
+    <!-- Top Nav Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between shadow-xs">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shadow-brand-500/30">
+          M
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-900 tracking-tight text-base">M&amp;MESTATE</span>
+            <span class="text-[10px] font-semibold bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full border border-brand-200">MANAGEMENT PANEL</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Live Supabase Database &amp; Storage Connected</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>View Public Site</span>
+        </a>
+        <button onclick="logoutAdmin()" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8 space-y-8">
+      
+      <!-- Stats Overview Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Properties</p>
+            <p id="statTotalProperties" class="text-2xl font-bold text-slate-900 mt-1">0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Listings</p>
+            <p id="statActiveListings" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Photos Uploaded</p>
+            <p id="statTotalPhotos" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Videos Uploaded</p>
+            <p id="statTotalVideos" class="text-2xl font-bold text-purple-600 mt-1">0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD NEW PROPERTY CATALOG SECTION -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Upload &amp; Add New Property Catalog
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Upload photos, videos, and property specs. Data syncs live to Supabase Storage &amp; Database.</p>
+          </div>
+          <button type="button" onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-600">Reset Form</button>
+        </div>
+
+        <form id="propertyForm" onsubmit="handlePropertySubmit(event)" class="space-y-6">
+          <!-- Basic Info Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Title *</label>
+              <input id="propTitle" type="text" required placeholder="e.g. Star Sun Hotel & Apartment" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Type *</label>
+              <select id="propType" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Apartment">Apartment</option>
+                <option value="Villa">Villa</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Loft">Loft</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Penthouse">Penthouse</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Location *</label>
+              <input id="propLocation" type="text" required placeholder="e.g. North Carolina, USA" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+            </div>
+          </div>
+
+          <!-- Specs & Pricing Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Price ($ / INR)</label>
+              <input id="propPrice" type="number" min="0" placeholder="2500" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Price Period</label>
+              <select id="propPricePeriod" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="month">per Month</option>
+                <option value="year">per Year</option>
+                <option value="sale">Total Sale Price</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Listing Status</label>
+              <select id="propStatus" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Active">Active</option>
+                <option value="Pending">Pending</option>
+                <option value="Rented">Rented</option>
+                <option value="Sold">Sold</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Bedrooms / Bathrooms</label>
+              <div class="grid grid-cols-2 gap-2">
+                <input id="propBeds" type="number" min="0" value="2" placeholder="Beds" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+                <input id="propBaths" type="number" min="0" value="1" placeholder="Baths" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Property Description</label>
+            <textarea id="propDescription" rows="2" placeholder="Write property features, highlights, and amenities..." class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+          </div>
+
+          <!-- SMOOTH PHOTO & VIDEO UPLOADER -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                Photos &amp; Videos Uploader (Direct to Supabase Storage) *
+              </label>
+              <span class="text-[11px] text-slate-400">Supported: JPG, PNG, WEBP, MP4, MOV, WEBM</span>
+            </div>
+
+            <div id="dropZone" 
+                 ondragover="handleDragOver(event)" 
+                 ondragleave="handleDragLeave(event)" 
+                 ondrop="handleDrop(event)"
+                 class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group">
+              <input id="fileInput" type="file" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)"/>
+              
+              <div class="flex flex-col items-center justify-center gap-2" onclick="document.getElementById('fileInput').click()">
+                <div class="w-14 h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
+                  <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-slate-800">
+                  <span class="text-brand-600 underline">Click to upload</span> or drag and drop photos &amp; videos here
+                </p>
+                <p class="text-xs text-slate-400">Files upload directly to your high-speed Supabase Storage bucket (property-images)</p>
+              </div>
+            </div>
+
+            <!-- Upload Progress Indicator -->
+            <div id="uploadProgressContainer" class="hidden mt-3 p-3 bg-brand-50 border border-brand-200 rounded-xl">
+              <div class="flex items-center justify-between text-xs text-brand-800 mb-1">
+                <span id="uploadStatusText">Uploading files to Supabase Storage...</span>
+                <span id="uploadPercentText" class="font-bold">0%</span>
+              </div>
+              <div class="w-full bg-brand-200 rounded-full h-2 overflow-hidden">
+                <div id="uploadProgressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Previews Gallery Grid -->
+            <div id="previewGallery" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button id="submitBtn" type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs tracking-wider uppercase rounded-xl shadow-md shadow-brand-500/25 transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Publish to Catalog</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- LIVE CATALOG PROPERTIES LIST -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Live Catalog Properties
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Manage existing properties in your database. Changes reflect instantly on the public website.</p>
+          </div>
+          <button onclick="loadProperties()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Refresh List</span>
+          </button>
+        </div>
+
+        <div id="propertiesLoading" class="py-12 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+          <div class="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading properties from Supabase...</span>
+        </div>
+
+        <div id="propertiesEmpty" class="hidden py-12 text-center text-slate-400 text-xs">
+          No custom properties found in the catalog yet. Use the form above to add your first property!
+        </div>
+
+        <div id="propertiesTableContainer" class="hidden overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] border-b border-slate-100">
+              <tr>
+                <th class="py-3 px-4">Preview</th>
+                <th class="py-3 px-4">Title &amp; Type</th>
+                <th class="py-3 px-4">Location</th>
+                <th class="py-3 px-4">Price</th>
+                <th class="py-3 px-4">Media</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="propertiesTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2">
+    <span id="toastIcon"></span>
+    <span id="toastMessage">Notification</span>
+  </div>
+
+  <script>
+    // SUPABASE CONFIGURATION
+    const SUPABASE_URL = "https://ctvjxpqeqajnqpdznzdy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmp4cHFlcWFqbnFwZHpuemR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NjU1MDksImV4cCI6MjExMTI0MTUwOX0.A2-MsIHBjLb4QtrTOyMEglypVORIlcySYZBUaoXcjlk";
+    const BUCKET_NAME = "property-images";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let selectedMediaFiles = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProperties();
+    });
+
+    function logoutAdmin() {
+      sessionStorage.removeItem("mmestate_admin_authenticated");
+      window.location.href = "admin.html";
+    }
+
+    // DRAG AND DROP
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById("dropZone").classList.add("border-brand-600", "bg-brand-50/50");
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById("dropZone").classList.remove("border-brand-600", "bg-brand-50/50");
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById("dropZone").classList.remove("border-brand-600", "bg-brand-50/50");
+      if (e.dataTransfer && e.dataTransfer.files) {
+        addFiles(Array.from(e.dataTransfer.files));
+      }
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files) {
+        addFiles(Array.from(e.target.files));
+      }
+    }
+
+    function addFiles(files) {
+      files.forEach(file => {
+        const isImage = file.type.startsWith("image/");
+        const isVideo = file.type.startsWith("video/");
+        if (!isImage && !isVideo) {
+          showToast(`Skipped ${file.name}: only photos & videos allowed`, "error");
+          return;
+        }
+
+        const previewUrl = URL.createObjectURL(file);
+        selectedMediaFiles.push({
+          file,
+          type: isImage ? 'image' : 'video',
+          previewUrl
+        });
+      });
+
+      renderMediaPreviews();
+    }
+
+    function removeMediaFile(index) {
+      selectedMediaFiles.splice(index, 1);
+      renderMediaPreviews();
+    }
+
+    function renderMediaPreviews() {
+      const container = document.getElementById("previewGallery");
+      container.innerHTML = "";
+
+      selectedMediaFiles.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "relative rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group h-28 flex flex-col justify-between";
+
+        if (item.type === 'image') {
+          card.innerHTML = `
+            <img src="${item.previewUrl}" class="w-full h-full object-cover"/>
+            <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-slate-900/80 text-white px-1.5 py-0.5 rounded backdrop-blur-xs uppercase">Photo</span>
+            <button type="button" onclick="removeMediaFile(${index})" class="absolute top-1.5 right-1.5 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center opacity-80 hover:opacity-100 transition shadow">
+              &times;
+            </button>
+          `;
+        } else {
+          card.innerHTML = `
+            <video src="${item.previewUrl}" class="w-full h-full object-cover" muted></video>
+            <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-purple-700/80 text-white px-1.5 py-0.5 rounded backdrop-blur-xs uppercase">Video</span>
+            <button type="button" onclick="removeMediaFile(${index})" class="absolute top-1.5 right-1.5 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center opacity-80 hover:opacity-100 transition shadow">
+              &times;
+            </button>
+          `;
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    // FORM SUBMISSION (UPLOAD TO SUPABASE STORAGE & INSERT DATABASE ROW)
+    async function handlePropertySubmit(e) {
+      e.preventDefault();
+
+      if (selectedMediaFiles.length === 0) {
+        showToast("Please upload at least one photo or video for this property.", "error");
+        return;
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      const progressContainer = document.getElementById("uploadProgressContainer");
+      const progressBar = document.getElementById("uploadProgressBar");
+      const statusText = document.getElementById("uploadStatusText");
+      const percentText = document.getElementById("uploadPercentText");
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+      progressContainer.classList.remove("hidden");
+
+      const uploadedImageUrls = [];
+      const uploadedVideoUrls = [];
+
+      try {
+        const total = selectedMediaFiles.length;
+
+        for (let i = 0; i < total; i++) {
+          const item = selectedMediaFiles[i];
+          const file = item.file;
+          const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const filePath = `properties/${Date.now()}_${cleanName}`;
+
+          statusText.innerText = `Uploading ${i + 1} of ${total}: ${file.name}...`;
+          const percent = Math.round(((i) / total) * 100);
+          progressBar.style.width = `${percent}%`;
+          percentText.innerText = `${percent}%`;
+
+          // Upload to Supabase Storage
+          const { data, error } = await supabase.storage
+            .from(BUCKET_NAME)
+            .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+          if (error) {
+            console.error("Storage upload error:", error);
+            throw new Error(`Failed to upload ${file.name}: ${error.message}`);
+          }
+
+          // Get Public URL
+          const { data: urlData } = supabase.storage
+            .from(BUCKET_NAME)
+            .getPublicUrl(filePath);
+
+          if (item.type === 'image') {
+            uploadedImageUrls.push(urlData.publicUrl);
+          } else {
+            uploadedVideoUrls.push(urlData.publicUrl);
+          }
+        }
+
+        progressBar.style.width = `100%`;
+        percentText.innerText = `100%`;
+        statusText.innerText = "Saving property to Supabase Database...";
+
+        const propertyPayload = {
+          title: document.getElementById("propTitle").value.trim(),
+          property_type: document.getElementById("propType").value,
+          location: document.getElementById("propLocation").value.trim(),
+          price: parseFloat(document.getElementById("propPrice").value) || 0,
+          price_period: document.getElementById("propPricePeriod").value,
+          status: document.getElementById("propStatus").value,
+          bedrooms: parseInt(document.getElementById("propBeds").value) || 1,
+          bathrooms: parseInt(document.getElementById("propBaths").value) || 1,
+          description: document.getElementById("propDescription").value.trim(),
+          images: uploadedImageUrls,
+          videos: uploadedVideoUrls
+        };
+
+        const { data: dbData, error: dbError } = await supabase
+          .from("properties")
+          .insert([propertyPayload])
+          .select();
+
+        if (dbError) {
+          throw new Error(`Database error: ${dbError.message}`);
+        }
+
+        showToast("Property published successfully to catalog!", "success");
+        resetForm();
+        loadProperties();
+
+      } catch (err) {
+        console.error("Submission failed:", err);
+        showToast(err.message || "Failed to publish property", "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        progressContainer.classList.add("hidden");
+      }
+    }
+
+    function resetForm() {
+      document.getElementById("propertyForm").reset();
+      selectedMediaFiles = [];
+      renderMediaPreviews();
+    }
+
+    // LOAD PROPERTIES FROM SUPABASE
+    async function loadProperties() {
+      const loading = document.getElementById("propertiesLoading");
+      const empty = document.getElementById("propertiesEmpty");
+      const container = document.getElementById("propertiesTableContainer");
+      const tbody = document.getElementById("propertiesTableBody");
+
+      loading.classList.remove("hidden");
+      empty.classList.add("hidden");
+      container.classList.add("hidden");
+
+      try {
+        const { data: properties, error } = await supabase
+          .from("properties")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        loading.classList.add("hidden");
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        updateStats(properties || []);
+
+        if (!properties || properties.length === 0) {
+          empty.classList.remove("hidden");
+          return;
+        }
+
+        container.classList.remove("hidden");
+        tbody.innerHTML = "";
+
+        properties.forEach(prop => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50/70 transition";
+
+          const primaryImage = (prop.images && prop.images.length > 0) 
+            ? prop.images[0] 
+            : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=300&q=80';
+
+          const photoCount = prop.images ? prop.images.length : 0;
+          const videoCount = prop.videos ? prop.videos.length : 0;
+
+          tr.innerHTML = `
+            <td class="py-3 px-4">
+              <img src="${primaryImage}" class="w-12 h-12 rounded-lg object-cover border border-slate-200"/>
+            </td>
+            <td class="py-3 px-4">
+              <p class="font-bold text-slate-900">${escapeHtml(prop.title)}</p>
+              <span class="text-[11px] text-brand-600 font-medium">${escapeHtml(prop.property_type)}</span>
+            </td>
+            <td class="py-3 px-4 text-slate-600">
+              ${escapeHtml(prop.location)}
+            </td>
+            <td class="py-3 px-4 font-semibold text-slate-900">
+              $${prop.price.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">/${prop.price_period}</span>
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-1.5 text-[11px]">
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-slate-600 font-medium">${photoCount} 📷</span>
+                ${videoCount > 0 ? `<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">${videoCount} 🎥</span>` : ''}
+              </div>
+            </td>
+            <td class="py-3 px-4">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${getStatusBadge(prop.status)}">
+                ${prop.status}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-right">
+              <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Delete Property">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        loading.classList.add("hidden");
+        console.error("Error loading properties:", err);
+        showToast("Error loading properties: " + err.message, "error");
+      }
+    }
+
+    function updateStats(properties) {
+      document.getElementById("statTotalProperties").innerText = properties.length;
+      document.getElementById("statActiveListings").innerText = properties.filter(p => p.status === 'Active').length;
+
+      let totalPhotos = 0;
+      let totalVideos = 0;
+      properties.forEach(p => {
+        if (p.images) totalPhotos += p.images.length;
+        if (p.videos) totalVideos += p.videos.length;
+      });
+
+      document.getElementById("statTotalPhotos").innerText = totalPhotos;
+      document.getElementById("statTotalVideos").innerText = totalVideos;
+    }
+
+    function getStatusBadge(status) {
+      switch (status) {
+        case 'Active': return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        case 'Pending': return 'bg-amber-50 text-amber-700 border border-amber-200';
+        case 'Rented': return 'bg-blue-50 text-blue-700 border border-blue-200';
+        case 'Sold': return 'bg-slate-100 text-slate-600 border border-slate-200';
+        default: return 'bg-slate-100 text-slate-600';
+      }
+    }
+
+    async function deleteProperty(id, title) {
+      if (!confirm(`Are you sure you want to delete "${title}" from the catalog?`)) {
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from("properties").delete().eq("id", id);
+        if (error) throw error;
+        showToast(`Deleted "${title}"`, "info");
+        loadProperties();
+      } catch (err) {
+        console.error("Delete failed:", err);
+        showToast("Delete failed: " + err.message, "error");
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById("toast");
+      const icon = document.getElementById("toastIcon");
+      const text = document.getElementById("toastMessage");
+
+      text.innerText = message;
+      if (type === 'success') {
+        icon.innerHTML = `<span class="text-emerald-400">✓</span>`;
+      } else if (type === 'error') {
+        icon.innerHTML = `<span class="text-rose-400">✕</span>`;
+      } else {
+        icon.innerHTML = `<span class="text-brand-400">ℹ</span>`;
+      }
+
+      toast.classList.remove("translate-y-24", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+
+      setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
