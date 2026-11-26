@@ -232,6 +232,23 @@
       safeSetText("ratePerVaar", "₹" + currentCalculatedArea.pricePerVaar.toLocaleString('en-IN'));
     }
 
+    function resetCalculator() {
+      const areaInput = document.getElementById("inputAreaValue");
+      const unitInput = document.getElementById("inputAreaUnit");
+      const priceInput = document.getElementById("inputPriceValue");
+      const typeInput = document.getElementById("inputPriceType");
+
+      if (areaInput) areaInput.value = "";
+      if (unitInput) unitInput.value = "guntha";
+      if (priceInput) priceInput.value = "";
+      if (typeInput) typeInput.value = "per_vigha";
+
+      calculateLand();
+      if (typeof showToast === 'function') {
+        showToast("Calculator inputs reset to 0", "info");
+      }
+    }
+
     function setupCalculatorListeners() {
       const areaInput = document.getElementById("inputAreaValue");
       const unitInput = document.getElementById("inputAreaUnit");
@@ -349,9 +366,14 @@
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">Type area or price in the boxes below: values convert instantly as you type.</p>
           </div>
-          <span class="text-[11px] font-semibold text-brand-700 bg-brand-50 px-2 py-1 rounded-md self-start sm:self-auto">
-            ૧ વિઘા = ૨૩.૫૦ ગુંઠા | ૧ એકર = ૪૦ ગુંઠા
-          </span>
+          <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+            <button type="button" onclick="resetCalculator()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-xs" title="Reset Calculator">
+              <span>↺ Reset Calculator</span>
+            </button>
+            <span class="text-[11px] font-semibold text-brand-700 bg-brand-50 px-2.5 py-1.5 rounded-xl border border-brand-200">
+              ૧ વિઘા = ૨૩.૫૦ ગુંઠા | ૧ એકર = ૪૦ ગુંઠા
+            </span>
+          </div>
         </div>
 
         <!-- Gujarati Reference Bar (Clean responsive grid) -->
@@ -493,7 +515,9 @@
             </h2>
             <p id="formSubheading" class="text-xs text-slate-500 mt-0.5">No compulsory fields. Publish whatever details you have ready.</p>
           </div>
-          <button type="button" onclick="cancelEdit()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold px-2 py-1">Reset</button>
+          <button type="button" onclick="resetForm()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-xs" title="Reset Property Form">
+            <span>↺ Reset Form</span>
+          </button>
         </div>
 
         <!-- ACTIVE EDIT MODE BANNER (Appears when editing an existing listing) -->
@@ -737,9 +761,9 @@
                  ondragover="handleDragOver(event)" 
                  ondragleave="handleDragLeave(event)" 
                  ondrop="handleDrop(event)"
-                 onclick="document.getElementById('fileInput').click()"
+                 onclick="triggerFileInput(event)"
                  class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group">
-              <input id="fileInput" type="file" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)"/>
+              <input id="fileInput" type="file" multiple accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.quicktime,.m4v" class="hidden" onchange="handleFileSelect(event)" onclick="event.stopPropagation()"/>
               
               <div class="flex flex-col items-center justify-center gap-2">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
@@ -749,6 +773,9 @@
                   <span class="text-brand-600 underline">Tap to browse Photos &amp; Videos</span> or Drag files here
                 </p>
                 <p class="text-xs text-slate-400">Supports Mobile Gallery, Camera, Google Photos, Desktop files (JPG, PNG, WEBP, MP4, MOV)</p>
+                <div class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow-sm">
+                  <span>📁 Select from Gallery / Files</span>
+                </div>
               </div>
             </div>
 
@@ -930,33 +957,52 @@
       }
     }
 
+    function triggerFileInput(e) {
+      if (e && e.target && e.target.id === 'fileInput') return;
+      const fi = document.getElementById("fileInput");
+      if (fi) fi.click();
+    }
+
     function handleFileSelect(e) {
-      if (e.target.files) {
+      if (e && e.target && e.target.files) {
         addFiles(Array.from(e.target.files));
+        // Reset file input value so re-selecting same files triggers change event smoothly
+        e.target.value = '';
       }
     }
 
     function addFiles(files) {
+      if (!files || files.length === 0) return;
+
+      let addedCount = 0;
       files.forEach(file => {
-        const isImage = file.type.startsWith("image/");
-        const isVideo = file.type.startsWith("video/");
+        const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name);
+        const isVideo = file.type.startsWith("video/") || /\.(mp4|mov|avi|webm|mkv|3gp)$/i.test(file.name);
+
         if (!isImage && !isVideo) {
           showToast(`Skipped ${file.name}: only photos & videos allowed`, "error");
           return;
         }
 
         const previewUrl = URL.createObjectURL(file);
-        selectedMediaFiles.push({ file, type: isImage ? 'image' : 'video', previewUrl });
+        selectedMediaFiles.push({ file, type: isVideo ? 'video' : 'image', previewUrl });
+        addedCount++;
       });
 
-      renderMediaPreviews();
+      if (addedCount > 0) {
+        renderMediaPreviews();
+        showToast(`Added ${addedCount} media file(s). You can review or delete them below.`, "success");
+      }
     }
 
     // Remove pending file before saving
     function removeMediaFile(index) {
-      selectedMediaFiles.splice(index, 1);
+      if (selectedMediaFiles[index] && selectedMediaFiles[index].previewUrl) {
+        try { URL.revokeObjectURL(selectedMediaFiles[index].previewUrl); } catch(e) {}
+      }
+      const removed = selectedMediaFiles.splice(index, 1);
       renderMediaPreviews();
-      showToast("Media deleted from upload list", "info");
+      showToast(`Removed "${removed[0]?.file?.name || 'file'}" from upload list`, "info");
     }
 
     // Remove existing saved media when editing
@@ -975,11 +1021,12 @@
       const container = document.getElementById("previewGallery");
       const header = document.getElementById("previewHeader");
       const countBadge = document.getElementById("mediaCountBadge");
+      if (!container) return;
       container.innerHTML = "";
 
       const totalCount = existingImages.length + existingVideos.length + selectedMediaFiles.length;
       if (countBadge) {
-        countBadge.innerText = `${totalCount} File${totalCount !== 1 ? 's' : ''}`;
+        countBadge.innerText = `${totalCount} File${totalCount !== 1 ? 's' : ''} Added`;
       }
 
       if (totalCount === 0) {
@@ -991,11 +1038,11 @@
       // 1. Existing Saved Photos (during edit)
       existingImages.forEach((url, idx) => {
         const card = document.createElement("div");
-        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-emerald-400 group h-28 shadow-sm flex flex-col justify-between";
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-emerald-400 group h-32 shadow-sm flex flex-col justify-between";
         card.innerHTML = `
           <img src="${url}" class="w-full h-full object-cover"/>
-          <span class="absolute top-1 left-1 text-[8px] font-bold bg-emerald-700/90 text-white px-1.5 py-0.5 rounded shadow">Saved Photo</span>
-          <button type="button" onclick="removeExistingMedia('image', ${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Photo">
+          <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-emerald-700/90 text-white px-2 py-0.5 rounded shadow">Saved Photo</span>
+          <button type="button" onclick="event.stopPropagation(); removeExistingMedia('image', ${idx})" class="absolute top-1.5 right-1.5 px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg flex items-center gap-1 font-extrabold text-[11px] shadow-md transition z-10" title="Delete Photo">
             <span>✕ Delete</span>
           </button>
         `;
@@ -1005,11 +1052,11 @@
       // 2. Existing Saved Videos (during edit)
       existingVideos.forEach((url, idx) => {
         const card = document.createElement("div");
-        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-purple-400 group h-28 shadow-sm flex flex-col justify-between";
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-purple-400 group h-32 shadow-sm flex flex-col justify-between";
         card.innerHTML = `
-          <video src="${url}" class="w-full h-full object-cover" muted></video>
-          <span class="absolute top-1 left-1 text-[8px] font-bold bg-purple-700/90 text-white px-1.5 py-0.5 rounded shadow">Saved Video 🎥</span>
-          <button type="button" onclick="removeExistingMedia('video', ${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Video">
+          <video src="${url}" class="w-full h-full object-cover" controls muted></video>
+          <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-purple-700/90 text-white px-2 py-0.5 rounded shadow">Saved Video 🎥</span>
+          <button type="button" onclick="event.stopPropagation(); removeExistingMedia('video', ${idx})" class="absolute top-1.5 right-1.5 px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg flex items-center gap-1 font-extrabold text-[11px] shadow-md transition z-10" title="Delete Video">
             <span>✕ Delete</span>
           </button>
         `;
@@ -1019,23 +1066,34 @@
       // 3. Newly Chosen Pending Photos & Videos
       selectedMediaFiles.forEach((item, idx) => {
         const card = document.createElement("div");
-        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-brand-400 group h-28 shadow-sm flex flex-col justify-between";
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-brand-400 group h-32 shadow-sm flex flex-col justify-between";
+
+        const fileName = item.file ? item.file.name : 'Media File';
+        const fileSize = item.file ? (item.file.size > 1048576 ? (item.file.size / 1048576).toFixed(1) + ' MB' : Math.round(item.file.size / 1024) + ' KB') : '';
 
         if (item.type === 'image') {
           card.innerHTML = `
             <img src="${item.previewUrl}" class="w-full h-full object-cover"/>
-            <span class="absolute top-1 left-1 text-[8px] font-bold bg-brand-600/90 text-white px-1.5 py-0.5 rounded shadow">New Photo</span>
-            <button type="button" onclick="removeMediaFile(${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Photo Before Saving">
+            <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-brand-600/90 text-white px-2 py-0.5 rounded shadow">New Photo</span>
+            <button type="button" onclick="event.stopPropagation(); removeMediaFile(${idx})" class="absolute top-1.5 right-1.5 px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg flex items-center gap-1 font-extrabold text-[11px] shadow-md transition z-10" title="Delete Photo Before Saving">
               <span>✕ Delete</span>
             </button>
+            <div class="absolute bottom-0 inset-x-0 bg-slate-900/80 backdrop-blur-xs px-2 py-1 text-[9px] text-white truncate flex items-center justify-between">
+              <span class="truncate">${escapeHtml(fileName)}</span>
+              <span class="text-slate-400 shrink-0 ml-1">${fileSize}</span>
+            </div>
           `;
         } else {
           card.innerHTML = `
-            <video src="${item.previewUrl}" class="w-full h-full object-cover" muted></video>
-            <span class="absolute top-1 left-1 text-[8px] font-bold bg-purple-600/90 text-white px-1.5 py-0.5 rounded shadow">New Video 🎥</span>
-            <button type="button" onclick="removeMediaFile(${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Video Before Saving">
+            <video src="${item.previewUrl}" class="w-full h-full object-cover" controls muted></video>
+            <span class="absolute top-1.5 left-1.5 text-[9px] font-bold bg-purple-600/90 text-white px-2 py-0.5 rounded shadow">New Video 🎥</span>
+            <button type="button" onclick="event.stopPropagation(); removeMediaFile(${idx})" class="absolute top-1.5 right-1.5 px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg flex items-center gap-1 font-extrabold text-[11px] shadow-md transition z-10" title="Delete Video Before Saving">
               <span>✕ Delete</span>
             </button>
+            <div class="absolute bottom-0 inset-x-0 bg-slate-900/80 backdrop-blur-xs px-2 py-1 text-[9px] text-white truncate flex items-center justify-between">
+              <span class="truncate">${escapeHtml(fileName)}</span>
+              <span class="text-slate-400 shrink-0 ml-1">${fileSize}</span>
+            </div>
           `;
         }
 
@@ -1072,8 +1130,9 @@
           for (let i = 0; i < total; i++) {
             const item = selectedMediaFiles[i];
             const file = item.file;
-            const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-            const filePath = `properties/${Date.now()}_${cleanName}`;
+            const cleanName = (file.name || 'file').replace(/[^a-zA-Z0-9._-]/g, "_");
+            const uniqueId = Date.now() + "_" + Math.random().toString(36).substring(2, 7);
+            const filePath = `properties/${uniqueId}_${cleanName}`;
 
             statusText.innerText = `Uploading ${i + 1} of ${total}: ${file.name}...`;
             const percent = Math.round(((i) / total) * 100);
@@ -1132,16 +1191,16 @@
           water_facilities: waterFacilities,
           description: document.getElementById("propDescription").value.trim(),
 
-          land_area_guntha: currentCalculatedArea.guntha,
-          land_area_vigha: currentCalculatedArea.vigha,
-          land_area_acre: currentCalculatedArea.acre,
-          land_area_sq_yard: currentCalculatedArea.vaar,
-          land_area_sq_meter: currentCalculatedArea.sqmtr,
-          land_area_hectare: currentCalculatedArea.hectare,
-          price_per_vigha: currentCalculatedArea.pricePerVigha,
-          price_per_guntha: currentCalculatedArea.pricePerGuntha,
-          total_price: currentCalculatedArea.totalPrice,
-          price: currentCalculatedArea.totalPrice,
+          land_area_guntha: currentCalculatedArea.guntha || 0,
+          land_area_vigha: currentCalculatedArea.vigha || 0,
+          land_area_acre: currentCalculatedArea.acre || 0,
+          land_area_sq_yard: currentCalculatedArea.vaar || 0,
+          land_area_sq_meter: currentCalculatedArea.sqmtr || 0,
+          land_area_hectare: currentCalculatedArea.hectare || 0,
+          price_per_vigha: currentCalculatedArea.pricePerVigha || 0,
+          price_per_guntha: currentCalculatedArea.pricePerGuntha || 0,
+          total_price: currentCalculatedArea.totalPrice || 0,
+          price: currentCalculatedArea.totalPrice || 0,
           price_period: 'total',
 
           images: finalImages,
@@ -1277,16 +1336,53 @@
     }
 
     function resetForm() {
-      document.getElementById("propertyForm").reset();
+      // 1. Reset standard form controls
+      const form = document.getElementById("propertyForm");
+      if (form) form.reset();
+
+      // 2. Explicitly clear all text inputs & textareas
+      const textFields = ["propTitle", "propLocation", "propMapLink", "propDescription"];
+      textFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+
+      // 3. Explicitly reset all dropdowns to first default option (index 0)
+      const selectFields = [
+        "propType", "propNames712", "propOldDocs", "propRoadType", "propFrontWidth",
+        "propNearestPop", "propRoadHeight", "propFencing", "propLight", "propMuslimPop"
+      ];
+      selectFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+
+      // 4. Explicitly uncheck ALL water facility checkboxes
+      document.querySelectorAll('input[name="waterFacility"]').forEach(cb => {
+        cb.checked = false;
+      });
+
+      // 5. Clear media files and previews
       selectedMediaFiles = [];
       existingImages = [];
       existingVideos = [];
+      const fileInput = document.getElementById("fileInput");
+      if (fileInput) fileInput.value = "";
       renderMediaPreviews();
-      document.getElementById("inputAreaValue").value = "52";
-      document.getElementById("inputPriceValue").value = "15000000";
-      document.getElementById("inputAreaUnit").value = "guntha";
-      document.getElementById("inputPriceType").value = "per_vigha";
-      calculateLand();
+
+      // 6. Reset edit mode state
+      editingPropertyId = null;
+      const banner = document.getElementById("editModeBanner");
+      const cancelBtn = document.getElementById("cancelEditBtn");
+      const submitText = document.getElementById("submitBtnText");
+      if (banner) banner.classList.add("hidden");
+      if (cancelBtn) cancelBtn.classList.add("hidden");
+      if (submitText) submitText.innerText = "Publish Catalog Entry";
+
+      // 7. Reset calculator cleanly
+      resetCalculator();
+
+      showToast("Property form & options have been reset", "info");
     }
 
     // LOAD PROPERTIES FROM SUPABASE (RENDER BOTH MOBILE CARDS & DESKTOP TABLE)
