@@ -8,6 +8,10 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Fonts: Inter + Noto Sans Gujarati -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -23,7 +27,7 @@
             }
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+            sans: ['Inter', 'Noto Sans Gujarati', 'Shruti', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
           }
         }
       }
@@ -911,13 +915,27 @@
       window.location.href = "admin.html";
     }
 
+    function getSafeMapUrl(prop) {
+      const link = (prop && prop.google_maps_link) ? String(prop.google_maps_link).trim() : '';
+      if (link && !link.includes('/example') && (link.startsWith('http://') || link.startsWith('https://'))) {
+        return link;
+      }
+      const loc = (prop && prop.location) ? prop.location.trim() : (prop && prop.title ? prop.title.trim() : 'Gujarat, India');
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', Gujarat')}`;
+    }
+
     function openTestMap() {
       const link = document.getElementById("propMapLink").value.trim();
-      if (!link) {
-        showToast("Please enter a Google Maps link first", "error");
+      const loc = document.getElementById("propLocation").value.trim();
+      if (link && !link.includes("/example") && (link.startsWith("http://") || link.startsWith("https://"))) {
+        window.open(link, "_blank");
         return;
       }
-      window.open(link, "_blank");
+      if (loc) {
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', Gujarat')}`, "_blank");
+        return;
+      }
+      showToast("Please enter a Google Maps link or City/Location name first", "error");
     }
 
     // Format ISO timestamp to Indian format (e.g. 26 Nov 2026, 01:27 PM)
@@ -1431,7 +1449,7 @@
 
           const photoCount = prop.images ? prop.images.length : 0;
           const videoCount = prop.videos ? prop.videos.length : 0;
-          const mapLink = prop.google_maps_link;
+          const mapLink = getSafeMapUrl(prop);
           const totalFormatted = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
           const dateFormatted = formatDateTime(prop.created_at);
 

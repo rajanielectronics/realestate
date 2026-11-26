@@ -6,6 +6,10 @@
 <title>M&MESTATE - Properties Management Dashboard</title>
 <!-- Tailwind CSS v3 with Plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter + Noto Sans Gujarati for Crystal Clear Regional Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Tailwind Configuration -->
 <script data-purpose="tailwind-config">
     tailwind.config = {
@@ -26,7 +30,7 @@
             }
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            sans: ['Inter', 'Noto Sans Gujarati', 'Shruti', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
           }
         }
       }
@@ -648,7 +652,16 @@
       }
     }
 
-    async function loadLivePropertiesFromSupabase() {
+    function getSafeMapUrl(prop) {
+      const link = (prop && prop.google_maps_link) ? String(prop.google_maps_link).trim() : '';
+      if (link && !link.includes('/example') && (link.startsWith('http://') || link.startsWith('https://'))) {
+        return link;
+      }
+      const loc = (prop && prop.location) ? prop.location.trim() : (prop && prop.title ? prop.title.trim() : 'Gujarat, India');
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', Gujarat')}`;
+    }
+
+    async function loadLivePropertiesFromSupabase(isManual = false) {
       const url = 'https://ctvjxpqeqajnqpdznzdy.supabase.co/rest/v1/properties?order=created_at.desc';
       const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmp4cHFlcWFqbnFwZHpuemR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NjU1MDksImV4cCI6MjExMTI0MTUwOX0.A2-MsIHBjLb4QtrTOyMEglypVORIlcySYZBUaoXcjlk';
 
@@ -678,7 +691,7 @@
           const videoCount = prop.videos ? prop.videos.length : 0;
           const isLand = (prop.property_type || '').toLowerCase().includes('land');
           const displayPrice = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
-          const mapLink = prop.google_maps_link;
+          const safeMapUrl = getSafeMapUrl(prop);
           const dateStr = formatPublicDate(prop.created_at);
 
           card.innerHTML = `
@@ -712,11 +725,11 @@
                   </span>
                 </div>
 
-                <div class="flex items-center text-xs text-slate-600 gap-1.5">
-                  <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                  <span class="truncate">${escapeHtml(prop.location)}</span>
-                  ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-[11px] text-emerald-600 font-bold hover:underline shrink-0">Map 📍</a>` : ''}
-                </div>
+                <a href="${safeMapUrl}" target="_blank" onclick="event.stopPropagation()" class="flex items-center text-xs text-slate-600 hover:text-emerald-700 gap-1.5 transition group/loc" title="Open Google Maps Location">
+                  <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0 group-hover/loc:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  <span class="truncate underline decoration-dotted decoration-slate-300 group-hover/loc:decoration-emerald-500">${escapeHtml(prop.location)}</span>
+                  <span class="ml-auto text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded shadow-2xs shrink-0 group-hover/loc:bg-emerald-100">Map 📍</span>
+                </a>
                 
                 ${isLand ? `
                   <div class="bg-purple-50/70 p-3 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1">
@@ -766,7 +779,13 @@
       if (!prop) return;
 
       document.getElementById('modalTitle').innerText = prop.title || 'Property Details';
-      document.getElementById('modalLocation').innerHTML = `📍 ${escapeHtml(prop.location || 'Gujarat, India')}`;
+      const safeMapUrl = getSafeMapUrl(prop);
+      document.getElementById('modalLocation').innerHTML = `
+        <a href="${safeMapUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 hover:underline font-bold text-xs" title="Open Google Maps">
+          <span>📍 ${escapeHtml(prop.location || 'Gujarat, India')}</span>
+          <span class="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">Open Google Maps ↗</span>
+        </a>
+      `;
       
       const totalPrice = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
       document.getElementById('modalPrice').innerText = `₹${totalPrice}`;
@@ -814,16 +833,13 @@
       document.getElementById('modalDescription').innerText = prop.description || 'No additional notes provided.';
       document.getElementById('modalDate').innerText = `📅 Listed on: ${formatPublicDate(prop.created_at)}`;
 
-      // Google Maps Navigation button
+      // Google Maps Navigation button (Always points to working location search or direct link)
       const mapBtnContainer = document.getElementById('modalMapButtonContainer');
-      mapBtnContainer.innerHTML = '';
-      if (prop.google_maps_link) {
-        mapBtnContainer.innerHTML = `
-          <a href="${escapeHtml(prop.google_maps_link)}" target="_blank" class="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
-            <span>Open in Google Maps 📍</span>
-          </a>
-        `;
-      }
+      mapBtnContainer.innerHTML = `
+        <a href="${safeMapUrl}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
+          <span>📍 Open in Google Maps</span>
+        </a>
+      `;
 
       // WhatsApp Button with Pre-filled Property Information
       const whatsappMsg = `Hello M&MESTATE, I am interested in property: "${prop.title}" (Location: ${prop.location}, Price: ₹${totalPrice}). Please share more details.`;
