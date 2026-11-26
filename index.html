@@ -51,8 +51,11 @@
 </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex font-sans">
+<!-- Mobile Sidebar Overlay Backdrop -->
+<div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-20 hidden lg:hidden transition-opacity"></div>
+
 <!-- BEGIN: LeftSidebar -->
-<aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-30 select-none">
+<aside id="appSidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-30 select-none transition-transform duration-300 -translate-x-full lg:translate-x-0">
 <div class="p-6">
 <!-- App Brand Logo -->
 <div class="flex items-center justify-between mb-8">
@@ -62,10 +65,10 @@
           </div>
 <span class="text-xl font-bold tracking-tight text-slate-900">M&amp;MESTATE</span>
 </div>
-<!-- Collapse Sidebar Icon -->
-<button class="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors" title="Collapse sidebar">
+<!-- Close Sidebar on Mobile / Tablet -->
+<button onclick="toggleSidebar()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-md hover:bg-slate-100 transition-colors lg:hidden" title="Close sidebar">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path d="M11 19l-7-7 7-7m8 14l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
 </svg>
 </button>
 </div>
@@ -171,41 +174,48 @@
 </aside>
 <!-- END: LeftSidebar -->
 <!-- Content Container with Margin for Sidebar -->
-<div class="flex-1 ml-64 flex flex-col min-w-0">
+<div class="flex-1 ml-0 lg:ml-64 flex flex-col min-w-0 w-full transition-all duration-300">
 <!-- BEGIN: TopHeader -->
-<header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-20">
-<!-- Search Input with Keyboard Shortcut -->
-<div class="w-96 relative">
+<header class="h-16 bg-white border-b border-slate-200 px-3.5 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-10 gap-2 sm:gap-4">
+<!-- Mobile Hamburger & Search Input -->
+<div class="flex items-center gap-2 flex-1 max-w-md">
+<button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg shrink-0 transition" title="Open Menu">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+  </svg>
+</button>
+<div class="w-full relative">
 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
 </svg>
 </div>
 <input class="w-full pl-10 pr-12 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all" placeholder="Search Property, Customer etc..." type="text"/>
-<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<div class="hidden sm:flex absolute inset-y-0 right-0 pr-2.5 items-center pointer-events-none">
 <kbd class="text-[10px] font-semibold text-slate-400 border border-slate-200 rounded px-1.5 py-0.5 bg-white">⌘ K</kbd>
 </div>
 </div>
+</div>
 <!-- Right Header Actions & Profile -->
-<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 sm:gap-4 shrink-0">
 <!-- Message Chat Icon -->
-<button class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Messages">
+<button class="hidden sm:inline-flex relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Messages">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
 </svg>
 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-600 rounded-full"></span>
 </button>
 <!-- Notification Bell Icon -->
-<button class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Notifications">
+<button class="hidden sm:inline-flex relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Notifications">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
 </svg>
 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-600 rounded-full"></span>
 </button>
 <!-- User Profile Card -->
-<div class="flex items-center gap-3 pl-3 border-l border-slate-200">
-<img alt="M&MESTATE Admin" class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn0G1Twqej9Co6de74EfoUYaHROgYBeV1yAYAg5guHrKutd_OKIh1x_4xehCo0wE6oL5Ykz3AGkIvLnDH0g_plmgH1Ch0YFNilTIfR-1klhVY71ID1yrDvWh_YQMdRVR7eZBf1Uvo2DQCc4z7d5Mw3bVEYaeB_7OkKye2f2zoaK20yVfTOLu6Htdf4-GtMFc_cgLIHnCHss_nC-kIJ_vTpcVgv2V81pCXgOizaxviq"/>
-<div class="text-left">
+<div class="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
+<img alt="M&MESTATE Admin" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-slate-100 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn0G1Twqej9Co6de74EfoUYaHROgYBeV1yAYAg5guHrKutd_OKIh1x_4xehCo0wE6oL5Ykz3AGkIvLnDH0g_plmgH1Ch0YFNilTIfR-1klhVY71ID1yrDvWh_YQMdRVR7eZBf1Uvo2DQCc4z7d5Mw3bVEYaeB_7OkKye2f2zoaK20yVfTOLu6Htdf4-GtMFc_cgLIHnCHss_nC-kIJ_vTpcVgv2V81pCXgOizaxviq"/>
+<div class="text-left hidden md:block">
 <p class="text-xs font-semibold text-slate-800 leading-tight">M&amp;MESTATE</p>
 <p class="text-[11px] text-slate-400 leading-tight">rajanielectronics08@gmail.com</p>
 </div>
@@ -214,7 +224,7 @@
 </header>
 <!-- END: TopHeader -->
 <!-- BEGIN: MainContentArea -->
-<main class="p-8 max-w-7xl">
+<main class="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
 <!-- Title & Main Actions Row -->
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
 <h1 class="text-2xl font-bold tracking-tight text-slate-900">Properties</h1>
@@ -884,6 +894,21 @@
       const modal = document.getElementById('propertyModal');
       if (e.target === modal) closePropertyModal();
     });
+
+    // Responsive Mobile/Tablet Sidebar Drawer Toggle
+    function toggleSidebar() {
+      const sidebar = document.getElementById("appSidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      if (!sidebar || !backdrop) return;
+      const isHidden = sidebar.classList.contains("-translate-x-full");
+      if (isHidden) {
+        sidebar.classList.remove("-translate-x-full");
+        backdrop.classList.remove("hidden");
+      } else {
+        sidebar.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      }
+    }
 
     function escapeHtml(str) {
       if (!str) return '';
