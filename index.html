@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>M&MESTATE - Properties Management Dashboard</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F5F3FF',
+              100: '#EDE9FE',
+              500: '#8B5CF6',
+              600: '#7C3AED',
+              700: '#6D28D9',
+            },
+            surface: {
+              main: '#F9FAFB',
+              card: '#FFFFFF',
+              border: '#E5E7EB',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+</script>
+<!-- Custom Scrollbar & Micro-tuning Styles -->
+<style data-purpose="custom-styling">
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F3F4F6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9CA3AF;
+    }
+</style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex font-sans">
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-30 select-none">
+<div class="p-6">
+<!-- App Brand Logo -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shadow-brand-500/30">
+            M
+          </div>
+<span class="text-xl font-bold tracking-tight text-slate-900">M&amp;MESTATE</span>
+</div>
+<!-- Collapse Sidebar Icon -->
+<button class="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors" title="Collapse sidebar">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M11 19l-7-7 7-7m8 14l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Navigation General -->
+<div class="mb-6">
+<p class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-3 px-3">GENERAL</p>
+<nav class="space-y-1">
+<!-- Dashboard Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Dashboard
+          </a>
+<!-- Properties Item (Active) -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-brand-600 bg-brand-50 rounded-lg transition-colors" href="#">
+<svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Properties
+          </a>
+<!-- Tenants Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Tenants
+          </a>
+<!-- Leases Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Leases
+          </a>
+<!-- Payment Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Payment
+          </a>
+<!-- Vacancies Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Vacancies
+          </a>
+<!-- Maintenance Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Maintenance
+          </a>
+<!-- Documents Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Documents
+          </a>
+<!-- Reports Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Reports
+          </a>
+<!-- Messages Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Messages
+          </a>
+</nav>
+</div>
+<!-- Navigation Support -->
+<div>
+<p class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-3 px-3">SUPPORT</p>
+<nav class="space-y-1">
+<!-- Help & Support Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Help &amp; support
+          </a>
+<!-- Settings Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Settings
+          </a>
+</nav>
+</div>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- Content Container with Margin for Sidebar -->
+<div class="flex-1 ml-64 flex flex-col min-w-0">
+<!-- BEGIN: TopHeader -->
+<header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-20">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="w-96 relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="w-full pl-10 pr-12 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all" placeholder="Search Property, Customer etc..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="text-[10px] font-semibold text-slate-400 border border-slate-200 rounded px-1.5 py-0.5 bg-white">⌘ K</kbd>
+</div>
+</div>
+<!-- Right Header Actions & Profile -->
+<div class="flex items-center gap-4">
+<!-- Message Chat Icon -->
+<button class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Messages">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-600 rounded-full"></span>
+</button>
+<!-- Notification Bell Icon -->
+<button class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" title="Notifications">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-600 rounded-full"></span>
+</button>
+<!-- User Profile Card -->
+<div class="flex items-center gap-3 pl-3 border-l border-slate-200">
+<img alt="M&MESTATE Admin" class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn0G1Twqej9Co6de74EfoUYaHROgYBeV1yAYAg5guHrKutd_OKIh1x_4xehCo0wE6oL5Ykz3AGkIvLnDH0g_plmgH1Ch0YFNilTIfR-1klhVY71ID1yrDvWh_YQMdRVR7eZBf1Uvo2DQCc4z7d5Mw3bVEYaeB_7OkKye2f2zoaK20yVfTOLu6Htdf4-GtMFc_cgLIHnCHss_nC-kIJ_vTpcVgv2V81pCXgOizaxviq"/>
+<div class="text-left">
+<p class="text-xs font-semibold text-slate-800 leading-tight">M&amp;MESTATE</p>
+<p class="text-[11px] text-slate-400 leading-tight">rajanielectronics08@gmail.com</p>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: MainContentArea -->
+<main class="p-8 max-w-7xl">
+<!-- Title & Main Actions Row -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Properties</h1>
+<div class="flex items-center gap-2.5">
+<!-- Import Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Import
+          </button>
+<!-- Add Property Button -->
+<button class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-black rounded-lg transition-colors shadow-sm">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+            Add Property
+          </button>
+</div>
+</div>
+<!-- BEGIN: SearchAndFiltersBar -->
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+<!-- Search & Property Type Filter -->
+<div class="flex items-center gap-3 flex-1 min-w-[280px] max-w-md">
+<!-- In-page Search -->
+<div class="relative flex-1">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="w-full pl-9 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 shadow-sm" placeholder="Search" type="text"/>
+</div>
+<!-- Property Type Dropdown -->
+<div class="relative min-w-[140px]">
+<select class="w-full appearance-none pl-3 pr-8 py-2 text-xs font-medium bg-white border border-slate-200 rounded-lg text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 shadow-sm cursor-pointer">
+<option>Property type</option>
+<option>Apartment</option>
+<option>Villa</option>
+<option>Hotel</option>
+<option>Loft</option>
+</select>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- View Switcher & Filter Button -->
+<div class="flex items-center gap-2">
+<!-- View Toggle Group -->
+<div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+<!-- List View Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 bg-white rounded-md shadow-xs">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              List
+            </button>
+<!-- Grid View Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              Grid
+            </button>
+</div>
+<!-- Detailed Filter Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 shadow-sm transition-colors">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Filter
+          </button>
+</div>
+</div>
+<!-- END: SearchAndFiltersBar -->
+<!-- BEGIN: PropertyCardsGrid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Modern kitchen interior" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMGCufUsgJ_vGMP9n3_A9fSb-6dzJUgZZlXfkMOIcUZoQ-C1ftm64Fk5dFwMXmXEzpxRKC2ouczFJRuMxaW1nV83g-Ksp6aJ-PGUZmmsAYF5ZJOnwO5s5GDC3Nj812L4286__AAHJqSKJ2nlOMwH_UhumW7oBJRfvdCwhuyzsiT7Qv9LhZ5bLuzyhfv58Mmi9PpZS9fhDc4YqHorWKKLtNfJxqYre1PhNG5LEE4W6a"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Cozy Scandinavian style living room" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkJwVvOvZaDACsNTyormk_HQWxDOGm7hFuFenfOwJPk3-82mHl5k2MccShly6DjT4yF60UvnbRiEFCmb1MXNjTRMCrw3OVZuVz07r3RwV9fN2uKuD757n28cEb3Ni4N1wZdnuNAAN3z15xeiD3hWvhI_hia6VyITTG4vKBGo1vdJq03gXPf4oFt1RjH5VuuwZFasGYMBB7k5nT7BCDpH2t4BxnOByy9qUHMmQZv_7I"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Contemporary minimalist beige living room" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwHHA9_Bqp5iASwuwAe6U-dLRzhljMb48TTc9GYTbmGibwhad7NKs3fWpjfAgPJDzAb8DqriwATMu5Ns_oW3L4jnGNPODirEqV0GhM7XEoAlCJviFaHIMEpKPZreitvAp6c2PFJxCZgP4c13FTnGXRosHtpmAHUtCq0p8k9vaNuzLDwd1dZj7RKvWci_sBL-RIyJMBmOPd3ncX4HdHuIpruFo0W6O0DcMuBKsnFmQ5"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Green luxury lounge room with armchair" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABQOIb28AQrJezfGoXv8qi7bNpQcdwAagayUhKLDaDx14kMZgWARY9LFhpmWhW_psZT71U7FOwx01lTRG3v_B6ZpVKfW4lVRsj7M5dnhanqgdSr1LTBPmVYl2z4epCR_5WCNV8srsLpUSkO1AnLbkRCrgzaO2jj32Kes57AWaglYqK-GIk2gWnDwpLSfIP6ElGWWEgdx3TYADkmc52iRKwXGkGEudQAOMZZEdDzI7n"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Luxury loft bedroom with glass partitions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5v8SG91_yziKH0Sqdf8ew3Im064RTw36Fjvz1jeAEo8qMXz4sOrxBNtlm-t9_uaAG9xgOBeuXbGyR5F2zPd9CEk4lxdTma6rISxoZDYjLqxls6YXefX1VSh9M1UpzZGtqXAe1lvESDCwx41cCKU2Ju_-dJcFnhsHxRZa5phRmgMGwZ2TMv5Di9oLHq7UFpPY9Fp0STGBMaFt9IeGWPmJD_FdD01_FACIT5c_kWf03"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+<!-- Card 6 -->
+<article class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between" data-purpose="property-card">
+<div>
+<div class="relative h-48 w-full overflow-hidden bg-slate-100">
+<img alt="Colorful stylish living room with gallery wall" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCtJqGiQva2gxN0e-ahYjX8fyWJtxIQ_QJfgr0qPoZJ9uDbawID97f6NlDqfoadIwszUdToY-iqFi2Xw8ChBUzSHA0hD-4aVbFAuWcLKeh26SJ8_KIbtzOC-4ncLWxsrZIdrKO8yP-FfpVZHNx9YpBMAlDE7h9cNBA9OtB7Z4_6VjyItEOOSj498h2Lm8m98LnQdntn6Ii6mYxpm3llOTTRSAL1qSZFkSQ9rVci0fe"/>
+<span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-600 border border-emerald-200 backdrop-blur-sm">Active</span>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-slate-900 text-sm mb-1 group-hover:text-brand-600 transition-colors">Star Sun Hotel &amp; Apartment</h3>
+<div class="flex items-center text-xs text-slate-500 gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>North Carolina, USA</span>
+</div>
+<div class="flex items-center text-xs text-slate-400 gap-1.5">
+<svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Updated: Jan 10</span>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2.5 px-2 bg-slate-50/50">
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Tenants</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Accountings</span></div>
+<div class="flex items-center justify-center gap-1.5 text-slate-600"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="text-[11px] font-medium">Maintenance</span></div>
+</div>
+</article>
+</div>
+<!-- END: PropertyCardsGrid -->
+</main>
+<!-- END: MainContentArea -->
+</div>
+<!-- Interactive Search / Filter Helpers -->
+<script data-purpose="dashboard-interactions">
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInputs = document.querySelectorAll('input[type="text"]');
+      window.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          if (searchInputs[0]) searchInputs[0].focus();
+        }
+      });
+    });
+</script>
+</body>
+</html>
