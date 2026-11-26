@@ -450,8 +450,167 @@
 </main>
 <!-- END: MainContentArea -->
 </div>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE PROPERTY DETAILS & MEDIA MODAL -->
+<!-- ============================================================ -->
+<div id="propertyModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 transition-opacity">
+  <div class="relative bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-100 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <!-- Modal Header -->
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 sticky top-0 z-10">
+      <div>
+        <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">Property Details</h3>
+        <p id="modalLocation" class="text-xs text-slate-500 mt-0.5 flex items-center gap-1"></p>
+      </div>
+      <button onclick="closePropertyModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center font-bold text-sm transition">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body (Scrollable) -->
+    <div class="p-5 sm:p-6 overflow-y-auto space-y-6">
+      <!-- Media Gallery: Main Display + Thumbnails -->
+      <div id="modalMediaSection" class="space-y-2">
+        <div id="modalMainMediaContainer" class="relative h-64 sm:h-96 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-xs flex items-center justify-center">
+          <!-- Injected via JS -->
+        </div>
+        <div id="modalThumbnails" class="flex gap-2 overflow-x-auto py-1"></div>
+      </div>
+
+      <!-- Price & Area Headline Banner -->
+      <div class="p-4 bg-purple-50/70 border border-purple-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-xs uppercase font-bold text-purple-700 tracking-wider">Total Deal Price (કુલ રકમ)</span>
+          <p id="modalPrice" class="text-2xl sm:text-3xl font-black text-slate-900 mt-0.5">₹0</p>
+        </div>
+        <div class="text-left sm:text-right">
+          <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Rate per Unit (ભાવ)</span>
+          <p id="modalRate" class="text-base sm:text-lg font-bold text-brand-700 mt-0.5">₹0</p>
+        </div>
+      </div>
+
+      <!-- Gujarati Land Area Breakdown Grid -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800">
+          Land Area Breakdown Across All Units (જમીન માપ આપોઆપ ગણતરી):
+        </h4>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center text-xs">
+          <div class="p-2.5 bg-purple-50/90 border border-purple-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-purple-700">Vigha (વિઘા)</span>
+            <p id="modalAreaVigha" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-brand-50 border border-brand-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-brand-700">Guntha (ગુંઠા)</span>
+            <p id="modalAreaGuntha" class="text-base font-extrabold text-brand-700 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-slate-500">Acre (એકર)</span>
+            <p id="modalAreaAcre" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-slate-500">Sq. Yard (વાર)</span>
+            <p id="modalAreaVaar" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-slate-500">Sq. Mtr (ચો.મી.)</span>
+            <p id="modalAreaSqMtr" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] uppercase font-bold text-slate-500">Hectare (હેકટર)</span>
+            <p id="modalAreaHectare" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl col-span-2 sm:col-span-1">
+            <span class="text-[10px] uppercase font-bold text-slate-500">Sq. Feet (ફૂટ)</span>
+            <p id="modalAreaSqFeet" class="text-base font-extrabold text-slate-900 mt-0.5">-</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal & Location Parameters Grid -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800">
+          Property Specifications &amp; Location Parameters:
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Names in 7/12 (૭/૧૨ માં નામ)</span>
+            <p id="modal712" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Old Documents (જૂના દસ્તાવેજ)</span>
+            <p id="modalOldDocs" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Road Type (રસ્તો)</span>
+            <p id="modalRoadType" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Front Face Width (મોઢું)</span>
+            <p id="modalFrontWidth" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Road Height Level (લેવલ)</span>
+            <p id="modalRoadHeight" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Nearest Population (વસ્તી)</span>
+            <p id="modalNearestPop" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Fencing (તાર ફેન્સિંગ)</span>
+            <p id="modalFencing" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Light / Electricity (વીજળી)</span>
+            <p id="modalLight" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-slate-400 text-[10px] uppercase font-semibold">Nearest Muslim Population</span>
+            <p id="modalMuslimPop" class="font-bold text-slate-900 mt-0.5">-</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water Facilities -->
+      <div class="p-3.5 bg-sky-50 border border-sky-200 rounded-2xl">
+        <span class="text-xs uppercase font-bold text-sky-900 tracking-wider">Water Facilities (પાણીની સગવડ):</span>
+        <div id="modalWater" class="flex flex-wrap gap-2 mt-2"></div>
+      </div>
+
+      <!-- Description / Notes -->
+      <div class="space-y-1.5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800">Property Description &amp; Notes:</h4>
+        <p id="modalDescription" class="text-xs text-slate-600 bg-slate-50 border border-slate-200 p-3.5 rounded-2xl whitespace-pre-line leading-relaxed">
+          No description provided.
+        </p>
+      </div>
+
+      <!-- Map & Date Posted -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+        <span id="modalDate" class="text-slate-400 font-medium">📅 Listed recently</span>
+        <div id="modalMapButtonContainer"></div>
+      </div>
+    </div>
+
+    <!-- Modal Footer Actions (Inquire Buttons) -->
+    <div class="px-5 py-4 border-t border-slate-100 bg-slate-50/80 flex items-center justify-end gap-2.5 flex-wrap">
+      <button onclick="closePropertyModal()" class="px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-xl transition">
+        Close
+      </button>
+      <a id="modalWhatsAppBtn" href="#" target="_blank" class="px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+        <span>💬 Inquire on WhatsApp</span>
+      </a>
+      <a href="mailto:rajanielectronics08@gmail.com" class="px-4 py-2.5 text-xs font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-xl transition flex items-center gap-1.5">
+        <span>✉️ Email Us</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- Interactive Search / Filter Helpers & Live Supabase Catalog Sync -->
 <script data-purpose="dashboard-interactions">
+    let publicProperties = [];
+
     document.addEventListener('DOMContentLoaded', () => {
       const searchInputs = document.querySelectorAll('input[type="text"]');
       window.addEventListener('keydown', (e) => {
@@ -464,6 +623,16 @@
       loadLivePropertiesFromSupabase();
     });
 
+    function formatPublicDate(iso) {
+      if (!iso) return 'Recent';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch(e) {
+        return iso;
+      }
+    }
+
     async function loadLivePropertiesFromSupabase() {
       const url = 'https://ctvjxpqeqajnqpdznzdy.supabase.co/rest/v1/properties?order=created_at.desc';
       const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmp4cHFlcWFqbnFwZHpuemR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NjU1MDksImV4cCI6MjExMTI0MTUwOX0.A2-MsIHBjLb4QtrTOyMEglypVORIlcySYZBUaoXcjlk';
@@ -474,75 +643,98 @@
         const properties = await res.json();
         if (!properties || properties.length === 0) return;
 
+        publicProperties = properties;
+
         const grid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
         if (!grid) return;
 
-        // Clear default static items and replace with live catalog
+        // Clear static items and replace with live catalog
         grid.innerHTML = '';
 
         properties.forEach(prop => {
           const card = document.createElement('article');
-          card.className = "bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col justify-between";
+          card.className = "bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col justify-between";
 
           const primaryImage = (prop.images && prop.images.length > 0) 
             ? prop.images[0] 
             : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80';
 
-          const hasVideo = prop.videos && prop.videos.length > 0;
+          const photoCount = prop.images ? prop.images.length : 0;
+          const videoCount = prop.videos ? prop.videos.length : 0;
           const isLand = (prop.property_type || '').toLowerCase().includes('land');
-          const displayPrice = prop.total_price || prop.price || 0;
+          const displayPrice = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
           const mapLink = prop.google_maps_link;
+          const dateStr = formatPublicDate(prop.created_at);
 
           card.innerHTML = `
             <div>
-              <div class="relative h-48 w-full overflow-hidden bg-slate-100">
+              <div class="relative h-52 w-full overflow-hidden bg-slate-900 cursor-pointer" onclick="openPropertyModal('${prop.id}')">
                 <img alt="${escapeHtml(prop.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${primaryImage}"/>
                 <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
-                  <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50/90 text-emerald-700 border border-emerald-200 backdrop-blur-sm">
-                    ${prop.status || 'Active'}
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 text-white shadow-xs">
+                    ${prop.status || 'Available'}
                   </span>
-                  ${hasVideo ? `<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-600 text-white shadow-xs">Video 🎥</span>` : ''}
-                  ${prop.road_type ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900/75 text-white backdrop-blur-xs">${escapeHtml(prop.road_type.split(' ')[0])}</span>` : ''}
+                  ${videoCount > 0 ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-700 text-white shadow-xs">🎥 ${videoCount} Video${videoCount > 1 ? 's' : ''}</span>` : ''}
+                  ${prop.road_type ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-slate-900/80 text-white backdrop-blur-xs">${escapeHtml(prop.road_type.split(' ')[0])}</span>` : ''}
                 </div>
-                <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900/85 text-white backdrop-blur-xs">
-                  ₹${displayPrice.toLocaleString()}
+                <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1 text-[10px] font-bold text-white bg-slate-900/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                  <span>📷 ${photoCount} Photos</span>
+                </div>
+                <span class="absolute bottom-2.5 right-2.5 px-3 py-1 rounded-xl text-sm font-extrabold bg-slate-900/90 text-white shadow-md backdrop-blur-xs">
+                  ₹${displayPrice}
                 </span>
               </div>
-              <div class="p-4">
-                <div class="flex items-start justify-between gap-2 mb-1">
-                  <h3 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors leading-snug">${escapeHtml(prop.title)}</h3>
+              <div class="p-4 space-y-2.5">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors leading-snug cursor-pointer" onclick="openPropertyModal('${prop.id}')">
+                      ${escapeHtml(prop.title)}
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">📅 Added: ${dateStr}</p>
+                  </div>
                   <span class="text-[10px] shrink-0 font-bold px-2 py-0.5 bg-brand-50 text-brand-700 border border-brand-200 rounded-md">
                     ${escapeHtml(prop.property_type || 'Land')}
                   </span>
                 </div>
-                <div class="flex items-center text-xs text-slate-500 gap-1.5 mb-2">
+
+                <div class="flex items-center text-xs text-slate-600 gap-1.5">
                   <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                  <span>${escapeHtml(prop.location)}</span>
-                  ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-[11px] text-emerald-600 font-bold hover:underline flex items-center gap-0.5">Map 📍</a>` : ''}
+                  <span class="truncate">${escapeHtml(prop.location)}</span>
+                  ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-[11px] text-emerald-600 font-bold hover:underline shrink-0">Map 📍</a>` : ''}
                 </div>
                 
                 ${isLand ? `
-                  <div class="bg-purple-50/60 p-2.5 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1 mb-2">
+                  <div class="bg-purple-50/70 p-3 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1">
                     <div class="flex justify-between font-bold text-slate-900">
                       <span>Area: ${prop.land_area_vigha || 0} Vigha (${prop.land_area_guntha || 0} Guntha)</span>
-                      <span>${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
+                      <span class="text-brand-700">${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
                     </div>
-                    <div class="flex justify-between text-[11px] text-slate-500">
-                      <span>7/12: ${escapeHtml(prop.names_in_7_12 || 'N/A')}</span>
-                      <span>Rate: ₹${(prop.price_per_vigha || 0).toLocaleString()}/Vigha</span>
+                    <div class="flex justify-between text-[11px] text-slate-500 pt-0.5 border-t border-purple-200/50">
+                      <span>7/12: <strong>${escapeHtml(prop.names_in_7_12 || 'N/A')}</strong></span>
+                      <span>Rate: <strong>₹${(prop.price_per_vigha || 0).toLocaleString('en-IN')}/Vigha</strong></span>
                     </div>
                   </div>
                 ` : `
-                  <div class="flex items-center text-xs text-slate-400 gap-2 mb-2">
-                    <span>${prop.bedrooms || 1} Bed, ${prop.bathrooms || 1} Bath</span>
+                  <div class="flex items-center text-xs text-slate-500 gap-2">
+                    <span>${prop.bedrooms || 1} Bed • ${prop.bathrooms || 1} Bath</span>
                   </div>
                 `}
+
+                <!-- Features Tags -->
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px]">
+                  ${prop.road_type ? `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">Road: ${escapeHtml(prop.road_type.split(' ')[0])}</span>` : ''}
+                  ${prop.fencing ? `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">Fencing: ${escapeHtml(prop.fencing.split(' ')[0])}</span>` : ''}
+                  ${prop.light_electricity ? `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">Light: ${escapeHtml(prop.light_electricity.split(' ')[0])}</span>` : ''}
+                  ${prop.water_facilities && prop.water_facilities.length > 0 ? `<span class="px-2 py-0.5 bg-sky-50 text-sky-700 rounded-md">Water: ${prop.water_facilities.length} types</span>` : ''}
+                </div>
               </div>
             </div>
-            <div class="border-t border-slate-100 grid grid-cols-3 divide-x divide-slate-100 py-2 px-2 bg-slate-50/50 text-[11px] text-slate-600 text-center">
-              <div><span class="font-bold text-slate-900">${prop.images ? prop.images.length : 0}</span> Photos</div>
-              <div><span class="font-bold text-slate-900">${prop.videos ? prop.videos.length : 0}</span> Videos</div>
-              <div><span class="font-bold text-emerald-600">Available</span></div>
+
+            <div class="p-3 bg-slate-50/70 border-t border-slate-100">
+              <button onclick="openPropertyModal('${prop.id}')" class="w-full py-2.5 px-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>View Full Details &amp; Photos (બધી વિગતો જુઓ)</span>
+              </button>
             </div>
           `;
 
@@ -552,6 +744,146 @@
         console.warn('Could not load live properties:', err);
       }
     }
+
+    // Modal Display Logic
+    function openPropertyModal(id) {
+      const prop = publicProperties.find(p => String(p.id) === String(id));
+      if (!prop) return;
+
+      document.getElementById('modalTitle').innerText = prop.title || 'Property Details';
+      document.getElementById('modalLocation').innerHTML = `📍 ${escapeHtml(prop.location || 'Gujarat, India')}`;
+      
+      const totalPrice = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
+      document.getElementById('modalPrice').innerText = `₹${totalPrice}`;
+      
+      const rateStr = prop.price_per_vigha 
+        ? `₹${prop.price_per_vigha.toLocaleString('en-IN')} / Vigha`
+        : (prop.price_per_guntha ? `₹${prop.price_per_guntha.toLocaleString('en-IN')} / Guntha` : 'Custom Deal');
+      document.getElementById('modalRate').innerText = rateStr;
+
+      // Land breakdown
+      document.getElementById('modalAreaVigha').innerText = prop.land_area_vigha || '-';
+      document.getElementById('modalAreaGuntha').innerText = prop.land_area_guntha || '-';
+      document.getElementById('modalAreaAcre').innerText = prop.land_area_acre || '-';
+      document.getElementById('modalAreaVaar').innerText = prop.land_area_sq_yard ? prop.land_area_sq_yard.toLocaleString('en-IN') : '-';
+      document.getElementById('modalAreaSqMtr').innerText = prop.land_area_sq_meter ? prop.land_area_sq_meter.toLocaleString('en-IN') : '-';
+      document.getElementById('modalAreaHectare').innerText = prop.land_area_hectare || '-';
+      document.getElementById('modalAreaSqFeet').innerText = prop.land_area_sq_yard ? (Math.round(prop.land_area_sq_yard * 9)).toLocaleString('en-IN') : '-';
+
+      // Specifications
+      document.getElementById('modal712').innerText = prop.names_in_7_12 || 'Not Specified';
+      document.getElementById('modalOldDocs').innerText = prop.old_documents_available || 'Not Specified';
+      document.getElementById('modalRoadType').innerText = prop.road_type || 'Not Specified';
+      document.getElementById('modalFrontWidth').innerText = prop.front_face_width || 'Not Specified';
+      document.getElementById('modalRoadHeight').innerText = prop.road_height_from_land || 'Not Specified';
+      document.getElementById('modalNearestPop').innerText = prop.nearest_population || 'Not Specified';
+      document.getElementById('modalFencing').innerText = prop.fencing || 'Not Specified';
+      document.getElementById('modalLight').innerText = prop.light_electricity || 'Not Specified';
+      document.getElementById('modalMuslimPop').innerText = prop.nearest_muslim_population || 'None';
+
+      // Water facilities
+      const waterContainer = document.getElementById('modalWater');
+      waterContainer.innerHTML = '';
+      if (prop.water_facilities && prop.water_facilities.length > 0) {
+        prop.water_facilities.forEach(fac => {
+          const badge = document.createElement('span');
+          badge.className = 'px-3 py-1 bg-white text-sky-800 border border-sky-300 rounded-lg text-xs font-semibold shadow-xs';
+          badge.innerText = `💧 ${fac}`;
+          waterContainer.appendChild(badge);
+        });
+      } else {
+        waterContainer.innerHTML = `<span class="text-xs text-slate-500">None specified</span>`;
+      }
+
+      // Description
+      document.getElementById('modalDescription').innerText = prop.description || 'No additional notes provided.';
+      document.getElementById('modalDate').innerText = `📅 Listed on: ${formatPublicDate(prop.created_at)}`;
+
+      // Google Maps Navigation button
+      const mapBtnContainer = document.getElementById('modalMapButtonContainer');
+      mapBtnContainer.innerHTML = '';
+      if (prop.google_maps_link) {
+        mapBtnContainer.innerHTML = `
+          <a href="${escapeHtml(prop.google_maps_link)}" target="_blank" class="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
+            <span>Open in Google Maps 📍</span>
+          </a>
+        `;
+      }
+
+      // WhatsApp Button with Pre-filled Property Information
+      const whatsappMsg = `Hello M&MESTATE, I am interested in property: "${prop.title}" (Location: ${prop.location}, Price: ₹${totalPrice}). Please share more details.`;
+      document.getElementById('modalWhatsAppBtn').href = `https://wa.me/919999999999?text=${encodeURIComponent(whatsappMsg)}`;
+
+      // Media Gallery Slider & Thumbnails
+      const mainContainer = document.getElementById('modalMainMediaContainer');
+      const thumbsContainer = document.getElementById('modalThumbnails');
+      mainContainer.innerHTML = '';
+      thumbsContainer.innerHTML = '';
+
+      const allMedia = [];
+      if (prop.images) prop.images.forEach(img => allMedia.push({ type: 'image', url: img }));
+      if (prop.videos) prop.videos.forEach(vid => allMedia.push({ type: 'video', url: vid }));
+
+      if (allMedia.length === 0) {
+        mainContainer.innerHTML = `
+          <div class="text-center text-slate-400 text-xs">
+            <p>No photos or videos uploaded</p>
+          </div>
+        `;
+      } else {
+        // Set first item as active
+        showModalMediaItem(allMedia[0]);
+
+        allMedia.forEach((item, index) => {
+          const thumb = document.createElement('div');
+          thumb.className = `w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 cursor-pointer transition ${index === 0 ? 'border-brand-500 ring-2 ring-brand-400/30' : 'border-slate-200 opacity-80 hover:opacity-100'}`;
+          if (item.type === 'image') {
+            thumb.innerHTML = `<img src="${item.url}" class="w-full h-full object-cover"/>`;
+          } else {
+            thumb.innerHTML = `
+              <div class="relative w-full h-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold">
+                <video src="${item.url}" class="w-full h-full object-cover" muted></video>
+                <span class="absolute inset-0 flex items-center justify-center bg-black/40">▶</span>
+              </div>
+            `;
+          }
+          thumb.onclick = () => {
+            Array.from(thumbsContainer.children).forEach(c => {
+              c.classList.remove('border-brand-500', 'ring-2', 'ring-brand-400/30');
+              c.classList.add('border-slate-200', 'opacity-80');
+            });
+            thumb.classList.remove('border-slate-200', 'opacity-80');
+            thumb.classList.add('border-brand-500', 'ring-2', 'ring-brand-400/30');
+            showModalMediaItem(item);
+          };
+          thumbsContainer.appendChild(thumb);
+        });
+      }
+
+      document.getElementById('propertyModal').classList.remove('hidden');
+    }
+
+    function showModalMediaItem(item) {
+      const container = document.getElementById('modalMainMediaContainer');
+      if (item.type === 'image') {
+        container.innerHTML = `<img src="${item.url}" class="w-full h-full object-contain bg-slate-950"/>`;
+      } else {
+        container.innerHTML = `<video src="${item.url}" controls autoplay class="w-full h-full object-contain bg-slate-950"></video>`;
+      }
+    }
+
+    function closePropertyModal() {
+      const container = document.getElementById('modalMainMediaContainer');
+      // Stop any playing video
+      if (container) container.innerHTML = '';
+      document.getElementById('propertyModal').classList.add('hidden');
+    }
+
+    // Close on background click
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('propertyModal');
+      if (e.target === modal) closePropertyModal();
+    });
 
     function escapeHtml(str) {
       if (!str) return '';

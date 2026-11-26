@@ -482,18 +482,37 @@
       </section>
 
       <!-- ============================================================ -->
-      <!-- PROPERTY CATALOG CREATION FORM -->
+      <!-- PROPERTY CATALOG CREATION & EDITING FORM -->
       <!-- ============================================================ -->
-      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+      <section id="propertyFormSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <h2 id="formHeading" class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Property Details &amp; Catalog Publisher
+              <span>Property Details &amp; Catalog Publisher</span>
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">No compulsory fields. Publish whatever details you have ready.</p>
+            <p id="formSubheading" class="text-xs text-slate-500 mt-0.5">No compulsory fields. Publish whatever details you have ready.</p>
           </div>
-          <button type="button" onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold px-2 py-1">Reset</button>
+          <button type="button" onclick="cancelEdit()" class="text-xs text-slate-400 hover:text-slate-600 font-semibold px-2 py-1">Reset</button>
+        </div>
+
+        <!-- ACTIVE EDIT MODE BANNER (Appears when editing an existing listing) -->
+        <div id="editModeBanner" class="hidden mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
+              ✏️
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs uppercase font-extrabold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-md">EDIT MODE</span>
+                <span id="editModePropertyTitle" class="text-sm font-bold text-amber-950"></span>
+              </div>
+              <p class="text-xs text-amber-800 mt-0.5">You are modifying an existing property. Update fields, delete/add media below, then click "Save &amp; Update Property".</p>
+            </div>
+          </div>
+          <button type="button" onclick="cancelEdit()" class="px-3.5 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+            <span>✕ Cancel Edit</span>
+          </button>
         </div>
 
         <form id="propertyForm" onsubmit="handlePropertySubmit(event)" class="space-y-6">
@@ -701,28 +720,35 @@
 
           <!-- Photos & Videos Uploader -->
           <div class="space-y-3 pt-2 border-t border-slate-100">
-            <div class="flex items-center justify-between">
-              <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Upload Photos &amp; Videos (Supabase Cloud Storage)
-              </label>
-              <span class="text-[11px] text-slate-400">Multiple files supported</span>
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Upload Photos &amp; Videos (Supabase Cloud Storage)
+                </label>
+                <p class="text-[11px] text-slate-400 mt-0.5">Upload from Phone Gallery, Google Photos, Mobile Camera, Laptop, or Drag &amp; Drop</p>
+              </div>
+              <span id="mediaCountBadge" class="text-[11px] font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-200">
+                0 Files Added
+              </span>
             </div>
 
+            <!-- Drop Zone / Browse Button -->
             <div id="dropZone" 
                  ondragover="handleDragOver(event)" 
                  ondragleave="handleDragLeave(event)" 
                  ondrop="handleDrop(event)"
+                 onclick="document.getElementById('fileInput').click()"
                  class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group">
               <input id="fileInput" type="file" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)"/>
               
-              <div class="flex flex-col items-center justify-center gap-2" onclick="document.getElementById('fileInput').click()">
+              <div class="flex flex-col items-center justify-center gap-2">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
                   <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <p class="text-sm font-semibold text-slate-800">
-                  <span class="text-brand-600 underline">Tap to choose photos &amp; videos</span> or drag here
+                <p class="text-sm font-bold text-slate-800">
+                  <span class="text-brand-600 underline">Tap to browse Photos &amp; Videos</span> or Drag files here
                 </p>
-                <p class="text-xs text-slate-400">Stores directly in Supabase bucket: property-images</p>
+                <p class="text-xs text-slate-400">Supports Mobile Gallery, Camera, Google Photos, Desktop files (JPG, PNG, WEBP, MP4, MOV)</p>
               </div>
             </div>
 
@@ -737,15 +763,24 @@
               </div>
             </div>
 
-            <!-- Preview Gallery Grid -->
-            <div id="previewGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5"></div>
+            <!-- Previews Header with Instruction -->
+            <div id="previewHeader" class="hidden flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+              <span class="font-semibold text-slate-700">Media Previews:</span>
+              <span class="text-rose-600 text-[11px] font-semibold">Tap red ✕ on any photo/video to delete before saving</span>
+            </div>
+
+            <!-- Preview Gallery Grid (Small Thumbnails with Clear Red Delete Button) -->
+            <div id="previewGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
           </div>
 
-          <!-- Submit Button -->
+          <!-- Submit & Cancel Buttons -->
           <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button id="cancelEditBtn" type="button" onclick="cancelEdit()" class="hidden px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
+              Cancel Edit
+            </button>
             <button id="submitBtn" type="submit" class="w-full sm:w-auto px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Publish Catalog Entry</span>
+              <span id="submitBtnText">Publish Catalog Entry</span>
             </button>
           </div>
         </form>
@@ -813,7 +848,7 @@
 
 
   <!-- ============================================================ -->
-  <!-- SUPABASE & FORM LOGIC -->
+  <!-- SUPABASE & FORM LOGIC (WITH MEDIA PREVIEWS, DELETION & EDITING) -->
   <!-- ============================================================ -->
   <script>
     const SUPABASE_URL = "https://ctvjxpqeqajnqpdznzdy.supabase.co";
@@ -829,7 +864,12 @@
       console.warn("Supabase init error:", e);
     }
 
+    // Media & Edit State Tracking
     let selectedMediaFiles = [];
+    let existingImages = [];
+    let existingVideos = [];
+    let loadedProperties = [];
+    let editingPropertyId = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       loadProperties();
@@ -850,7 +890,25 @@
       window.open(link, "_blank");
     }
 
-    // Drag and drop
+    // Format ISO timestamp to Indian format (e.g. 26 Nov 2026, 01:27 PM)
+    function formatDateTime(isoString) {
+      if (!isoString) return 'Just now';
+      try {
+        const d = new Date(isoString);
+        return d.toLocaleString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    // Drag and Drop handlers
     function handleDragOver(e) {
       e.preventDefault();
       document.getElementById("dropZone").classList.add("border-brand-600", "bg-brand-50/50");
@@ -891,33 +949,89 @@
       renderMediaPreviews();
     }
 
+    // Remove pending file before saving
     function removeMediaFile(index) {
       selectedMediaFiles.splice(index, 1);
       renderMediaPreviews();
+      showToast("Media deleted from upload list", "info");
     }
 
+    // Remove existing saved media when editing
+    function removeExistingMedia(type, index) {
+      if (type === 'image') {
+        existingImages.splice(index, 1);
+      } else {
+        existingVideos.splice(index, 1);
+      }
+      renderMediaPreviews();
+      showToast("Media removed. Save property to make changes permanent.", "info");
+    }
+
+    // Render Thumbnail Previews with Obvious Red Delete Button
     function renderMediaPreviews() {
       const container = document.getElementById("previewGallery");
+      const header = document.getElementById("previewHeader");
+      const countBadge = document.getElementById("mediaCountBadge");
       container.innerHTML = "";
 
-      selectedMediaFiles.forEach((item, index) => {
+      const totalCount = existingImages.length + existingVideos.length + selectedMediaFiles.length;
+      if (countBadge) {
+        countBadge.innerText = `${totalCount} File${totalCount !== 1 ? 's' : ''}`;
+      }
+
+      if (totalCount === 0) {
+        if (header) header.classList.add("hidden");
+        return;
+      }
+      if (header) header.classList.remove("hidden");
+
+      // 1. Existing Saved Photos (during edit)
+      existingImages.forEach((url, idx) => {
         const card = document.createElement("div");
-        card.className = "relative rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group h-24 flex flex-col justify-between";
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-emerald-400 group h-28 shadow-sm flex flex-col justify-between";
+        card.innerHTML = `
+          <img src="${url}" class="w-full h-full object-cover"/>
+          <span class="absolute top-1 left-1 text-[8px] font-bold bg-emerald-700/90 text-white px-1.5 py-0.5 rounded shadow">Saved Photo</span>
+          <button type="button" onclick="removeExistingMedia('image', ${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Photo">
+            <span>✕ Delete</span>
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      // 2. Existing Saved Videos (during edit)
+      existingVideos.forEach((url, idx) => {
+        const card = document.createElement("div");
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-purple-400 group h-28 shadow-sm flex flex-col justify-between";
+        card.innerHTML = `
+          <video src="${url}" class="w-full h-full object-cover" muted></video>
+          <span class="absolute top-1 left-1 text-[8px] font-bold bg-purple-700/90 text-white px-1.5 py-0.5 rounded shadow">Saved Video 🎥</span>
+          <button type="button" onclick="removeExistingMedia('video', ${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Video">
+            <span>✕ Delete</span>
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      // 3. Newly Chosen Pending Photos & Videos
+      selectedMediaFiles.forEach((item, idx) => {
+        const card = document.createElement("div");
+        card.className = "relative rounded-xl overflow-hidden bg-slate-900 border-2 border-brand-400 group h-28 shadow-sm flex flex-col justify-between";
 
         if (item.type === 'image') {
           card.innerHTML = `
             <img src="${item.previewUrl}" class="w-full h-full object-cover"/>
-            <span class="absolute top-1 left-1 text-[8px] font-bold bg-slate-900/80 text-white px-1 py-0.5 rounded uppercase">Photo</span>
-            <button type="button" onclick="removeMediaFile(${index})" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center font-bold text-xs opacity-90 shadow">
-              &times;
+            <span class="absolute top-1 left-1 text-[8px] font-bold bg-brand-600/90 text-white px-1.5 py-0.5 rounded shadow">New Photo</span>
+            <button type="button" onclick="removeMediaFile(${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Photo Before Saving">
+              <span>✕ Delete</span>
             </button>
           `;
         } else {
           card.innerHTML = `
             <video src="${item.previewUrl}" class="w-full h-full object-cover" muted></video>
-            <span class="absolute top-1 left-1 text-[8px] font-bold bg-purple-700/80 text-white px-1 py-0.5 rounded uppercase">Video</span>
-            <button type="button" onclick="removeMediaFile(${index})" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center font-bold text-xs opacity-90 shadow">
-              &times;
+            <span class="absolute top-1 left-1 text-[8px] font-bold bg-purple-600/90 text-white px-1.5 py-0.5 rounded shadow">New Video 🎥</span>
+            <button type="button" onclick="removeMediaFile(${idx})" class="absolute top-1 right-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center gap-1 font-bold text-[10px] shadow-md transition" title="Delete Video Before Saving">
+              <span>✕ Delete</span>
             </button>
           `;
         }
@@ -926,7 +1040,7 @@
       });
     }
 
-    // FORM SUBMIT (No compulsory validation)
+    // FORM SUBMIT (Handles Both Create and Edit/Update)
     async function handlePropertySubmit(e) {
       e.preventDefault();
 
@@ -944,8 +1058,8 @@
       submitBtn.disabled = true;
       submitBtn.classList.add("opacity-50", "cursor-not-allowed");
 
-      const uploadedImageUrls = [];
-      const uploadedVideoUrls = [];
+      const newlyUploadedImageUrls = [];
+      const newlyUploadedVideoUrls = [];
 
       try {
         if (selectedMediaFiles.length > 0) {
@@ -976,9 +1090,9 @@
               .getPublicUrl(filePath);
 
             if (item.type === 'image') {
-              uploadedImageUrls.push(urlData.publicUrl);
+              newlyUploadedImageUrls.push(urlData.publicUrl);
             } else {
-              uploadedVideoUrls.push(urlData.publicUrl);
+              newlyUploadedVideoUrls.push(urlData.publicUrl);
             }
           }
 
@@ -993,6 +1107,10 @@
         const titleVal = document.getElementById("propTitle").value.trim() || "Untitled Property";
         const typeVal = document.getElementById("propType").value;
         const locationVal = document.getElementById("propLocation").value.trim() || "Gujarat, India";
+
+        // Merge existing media with newly uploaded media
+        const finalImages = [...existingImages, ...newlyUploadedImageUrls];
+        const finalVideos = [...existingVideos, ...newlyUploadedVideoUrls];
 
         const propertyPayload = {
           title: titleVal,
@@ -1023,19 +1141,37 @@
           price: currentCalculatedArea.totalPrice,
           price_period: 'total',
 
-          images: uploadedImageUrls,
-          videos: uploadedVideoUrls
+          images: finalImages,
+          videos: finalVideos
         };
 
-        const { data: dbData, error: dbError } = await supabase
-          .from("properties")
-          .insert([propertyPayload])
-          .select();
+        if (editingPropertyId) {
+          // UPDATE EXISTING PROPERTY
+          propertyPayload.updated_at = new Date().toISOString();
 
-        if (dbError) throw dbError;
+          const { data: dbData, error: dbError } = await supabase
+            .from("properties")
+            .update(propertyPayload)
+            .eq("id", editingPropertyId)
+            .select();
 
-        showToast("Catalog listing published successfully!", "success");
-        resetForm();
+          if (dbError) throw dbError;
+
+          showToast("Property catalog updated successfully!", "success");
+          cancelEdit();
+        } else {
+          // INSERT NEW PROPERTY
+          const { data: dbData, error: dbError } = await supabase
+            .from("properties")
+            .insert([propertyPayload])
+            .select();
+
+          if (dbError) throw dbError;
+
+          showToast("Catalog listing published successfully!", "success");
+          resetForm();
+        }
+
         loadProperties();
 
       } catch (err) {
@@ -1048,12 +1184,105 @@
       }
     }
 
+    // Enter Edit Mode for a Property
+    function editProperty(id) {
+      const prop = loadedProperties.find(p => String(p.id) === String(id));
+      if (!prop) {
+        showToast("Property record not found", "error");
+        return;
+      }
+
+      editingPropertyId = prop.id;
+
+      // 1. Text & Select Inputs
+      document.getElementById("propTitle").value = prop.title || "";
+      document.getElementById("propType").value = prop.property_type || "Land (જમીન / પ્લોટ)";
+      document.getElementById("propLocation").value = prop.location || "";
+      document.getElementById("propMapLink").value = prop.google_maps_link || "";
+      document.getElementById("propNames712").value = prop.names_in_7_12 || "Not Known / Unspecified";
+      document.getElementById("propOldDocs").value = prop.old_documents_available || "Yes";
+      document.getElementById("propRoadType").value = prop.road_type || "Damar (ડામર રોડ)";
+      document.getElementById("propFrontWidth").value = prop.front_face_width || "Wide (મોટો / પહોળો)";
+      document.getElementById("propNearestPop").value = prop.nearest_population || "< 1 km";
+      document.getElementById("propRoadHeight").value = prop.road_height_from_land || "Above Land (રોડ ઊંચો છે)";
+      document.getElementById("propFencing").value = prop.fencing || "Yes (હા)";
+      document.getElementById("propLight").value = prop.light_electricity || "Yes (હા)";
+      document.getElementById("propMuslimPop").value = prop.nearest_muslim_population || "None (નથી)";
+      document.getElementById("propDescription").value = prop.description || "";
+
+      // 2. Water Facilities Checkboxes
+      const facilities = prop.water_facilities || [];
+      document.querySelectorAll('input[name="waterFacility"]').forEach(cb => {
+        cb.checked = facilities.includes(cb.value);
+      });
+
+      // 3. Land Area & Price Calculator
+      if (prop.land_area_guntha) {
+        document.getElementById("inputAreaValue").value = prop.land_area_guntha;
+        document.getElementById("inputAreaUnit").value = "guntha";
+      } else if (prop.land_area_vigha) {
+        document.getElementById("inputAreaValue").value = prop.land_area_vigha;
+        document.getElementById("inputAreaUnit").value = "vigha";
+      }
+
+      if (prop.price_per_vigha) {
+        document.getElementById("inputPriceValue").value = prop.price_per_vigha;
+        document.getElementById("inputPriceType").value = "per_vigha";
+      } else if (prop.total_price || prop.price) {
+        document.getElementById("inputPriceValue").value = prop.total_price || prop.price;
+        document.getElementById("inputPriceType").value = "total_price";
+      }
+      calculateLand();
+
+      // 4. Media Previews
+      existingImages = (prop.images || []).slice();
+      existingVideos = (prop.videos || []).slice();
+      selectedMediaFiles = [];
+      renderMediaPreviews();
+
+      // 5. Update UI for Edit Mode
+      const banner = document.getElementById("editModeBanner");
+      const bannerTitle = document.getElementById("editModePropertyTitle");
+      const cancelBtn = document.getElementById("cancelEditBtn");
+      const submitText = document.getElementById("submitBtnText");
+
+      if (banner) banner.classList.remove("hidden");
+      if (bannerTitle) bannerTitle.innerText = `"${prop.title}" • Added: ${formatDateTime(prop.created_at)}`;
+      if (cancelBtn) cancelBtn.classList.remove("hidden");
+      if (submitText) submitText.innerText = "Save & Update Property Details";
+
+      // Scroll smoothly to form
+      const formSection = document.getElementById("propertyFormSection");
+      if (formSection) formSection.scrollIntoView({ behavior: 'smooth' });
+
+      showToast(`Editing "${prop.title}". You can modify details or delete photos below.`, "info");
+    }
+
+    // Cancel Edit Mode & Reset Form
+    function cancelEdit() {
+      editingPropertyId = null;
+
+      const banner = document.getElementById("editModeBanner");
+      const cancelBtn = document.getElementById("cancelEditBtn");
+      const submitText = document.getElementById("submitBtnText");
+
+      if (banner) banner.classList.add("hidden");
+      if (cancelBtn) cancelBtn.classList.add("hidden");
+      if (submitText) submitText.innerText = "Publish Catalog Entry";
+
+      resetForm();
+    }
+
     function resetForm() {
       document.getElementById("propertyForm").reset();
       selectedMediaFiles = [];
+      existingImages = [];
+      existingVideos = [];
       renderMediaPreviews();
       document.getElementById("inputAreaValue").value = "52";
       document.getElementById("inputPriceValue").value = "15000000";
+      document.getElementById("inputAreaUnit").value = "guntha";
+      document.getElementById("inputPriceType").value = "per_vigha";
       calculateLand();
     }
 
@@ -1085,7 +1314,8 @@
 
         if (error) throw error;
 
-        updateStats(properties || []);
+        loadedProperties = properties || [];
+        updateStats(loadedProperties);
 
         if (!properties || properties.length === 0) {
           empty.classList.remove("hidden");
@@ -1106,17 +1336,24 @@
           const videoCount = prop.videos ? prop.videos.length : 0;
           const mapLink = prop.google_maps_link;
           const totalFormatted = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
+          const dateFormatted = formatDateTime(prop.created_at);
 
           // 1. DESKTOP ROW
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50 transition";
           tr.innerHTML = `
             <td class="py-3 px-3">
-              <img src="${primaryImage}" class="w-12 h-12 rounded-lg object-cover border border-slate-200"/>
+              <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200">
+                <img src="${primaryImage}" class="w-full h-full object-cover"/>
+                ${videoCount > 0 ? `<span class="absolute bottom-0 right-0 bg-purple-700 text-white text-[8px] font-bold px-1 rounded-tl">🎥</span>` : ''}
+              </div>
             </td>
             <td class="py-3 px-3">
-              <p class="font-bold text-slate-900">${escapeHtml(prop.title)}</p>
-              <span class="text-[11px] text-brand-600 font-semibold">${escapeHtml(prop.property_type)}</span>
+              <p class="font-bold text-slate-900 leading-tight">${escapeHtml(prop.title)}</p>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[11px] text-brand-600 font-semibold">${escapeHtml(prop.property_type)}</span>
+                <span class="text-[10px] text-slate-400">📅 ${dateFormatted}</span>
+              </div>
             </td>
             <td class="py-3 px-3">
               <p class="font-bold text-slate-900">₹${totalFormatted}</p>
@@ -1125,7 +1362,7 @@
               </p>
             </td>
             <td class="py-3 px-3 text-slate-600">
-              <p>${escapeHtml(prop.location)}</p>
+              <p class="truncate max-w-[140px]">${escapeHtml(prop.location)}</p>
               ${mapLink ? `
                 <a href="${escapeHtml(mapLink)}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold hover:underline">
                   <span>Map 📍</span>
@@ -1147,28 +1384,40 @@
               </div>
             </td>
             <td class="py-3 px-3 text-right">
-              <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Delete">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="editProperty('${prop.id}')" class="px-2.5 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-lg transition flex items-center gap-1" title="Edit Property">
+                  <span>✏️ Edit</span>
+                </button>
+                <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Delete">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
             </td>
           `;
           tbody.appendChild(tr);
 
           // 2. MOBILE CARD (Easy touch targets on phone & iPad)
           const mobileCard = document.createElement("div");
-          mobileCard.className = "bg-slate-50 border border-slate-200 rounded-xl p-3 flex gap-3 items-start justify-between";
+          mobileCard.className = "bg-white border border-slate-200 rounded-xl p-3.5 flex gap-3 items-start justify-between shadow-xs";
           mobileCard.innerHTML = `
-            <img src="${primaryImage}" class="w-16 h-16 rounded-lg object-cover shrink-0 border border-slate-200"/>
+            <div class="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-200">
+              <img src="${primaryImage}" class="w-full h-full object-cover"/>
+              ${videoCount > 0 ? `<span class="absolute bottom-0 right-0 bg-purple-700 text-white text-[8px] font-bold px-1 rounded-tl">🎥</span>` : ''}
+            </div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-1">
+              <div class="flex items-start justify-between gap-1 mb-0.5">
                 <h4 class="font-bold text-slate-900 text-xs truncate">${escapeHtml(prop.title)}</h4>
-                <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="text-rose-600 p-1 shrink-0" title="Delete">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button onclick="editProperty('${prop.id}')" class="px-2 py-0.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-md text-[11px] font-bold transition">✏️ Edit</button>
+                  <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="text-rose-600 p-1" title="Delete">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
               </div>
               <p class="text-[11px] text-brand-700 font-semibold">${escapeHtml(prop.property_type)} • ₹${totalFormatted}</p>
-              <p class="text-[10px] text-slate-500 truncate">${escapeHtml(prop.location)}</p>
-              <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-600">
+              <p class="text-[10px] text-slate-400">📅 ${dateFormatted}</p>
+              <p class="text-[10px] text-slate-500 truncate mt-0.5">${escapeHtml(prop.location)}</p>
+              <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-600 flex-wrap">
                 <span>${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha` : ''}</span>
                 <span>• ${photoCount} 📷</span>
                 ${videoCount > 0 ? `<span>• ${videoCount} 🎥</span>` : ''}
@@ -1178,6 +1427,75 @@
           `;
           mobileContainer.appendChild(mobileCard);
         });
+
+      } catch (err) {
+        loading.classList.add("hidden");
+        console.error("Error loading properties:", err);
+      }
+    }
+
+    function updateStats(properties) {
+      safeSetText("statTotalProperties", properties.length);
+      safeSetText("statLandCount", properties.filter(p => (p.property_type || '').toLowerCase().includes('land')).length);
+
+      let totalPhotos = 0;
+      let totalVideos = 0;
+      properties.forEach(p => {
+        if (p.images) totalPhotos += p.images.length;
+        if (p.videos) totalVideos += p.videos.length;
+      });
+
+      safeSetText("statTotalPhotos", totalPhotos);
+      safeSetText("statTotalVideos", totalVideos);
+    }
+
+    async function deleteProperty(id, title) {
+      if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+
+      try {
+        const { error } = await supabase.from("properties").delete().eq("id", id);
+        if (error) throw error;
+        showToast(`Deleted "${title}"`, "info");
+        loadProperties();
+      } catch (err) {
+        console.error("Delete failed:", err);
+        showToast("Delete failed: " + err.message, "error");
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById("toast");
+      const icon = document.getElementById("toastIcon");
+      const text = document.getElementById("toastMessage");
+
+      text.innerText = message;
+      if (type === 'success') {
+        icon.innerHTML = `<span class="text-emerald-400">✓</span>`;
+      } else if (type === 'error') {
+        icon.innerHTML = `<span class="text-rose-400">✕</span>`;
+      } else {
+        icon.innerHTML = `<span class="text-brand-400">ℹ</span>`;
+      }
+
+      toast.classList.remove("translate-y-24", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+
+      setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 3500);
+    }
+  </script>
 
       } catch (err) {
         loading.classList.add("hidden");
