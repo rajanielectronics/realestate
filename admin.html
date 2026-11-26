@@ -6,9 +6,14 @@
   <title>M&MESTATE - Admin Login</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <style>
-    @media screen and (max-width: 768px) {
+    /* iOS & Tablet input zoom prevention: input font must be at least 16px */
+    @media screen and (max-width: 1024px) {
       input, select, textarea {
         font-size: 16px !important;
+        min-height: 48px !important;
+      }
+      button {
+        min-height: 48px !important;
       }
     }
   </style>
@@ -89,7 +94,7 @@
     const VALID_PASSWORD = "Rajani08";
 
     // If already logged in, redirect straight to panel.html
-    if (sessionStorage.getItem("mmestate_admin_authenticated") === "true") {
+    if (sessionStorage.getItem("mmestate_admin_authenticated") === "true" || localStorage.getItem("mmestate_admin_authenticated") === "true") {
       window.location.href = "panel.html";
     }
 
@@ -105,13 +110,14 @@
         // SUCCESS
         alertBox.classList.add("hidden");
         sessionStorage.setItem("mmestate_admin_authenticated", "true");
+        localStorage.setItem("mmestate_admin_authenticated", "true");
         btn.innerHTML = `<span>Signing In...</span>`;
         btn.disabled = true;
 
-        // Redirect to the other page (panel.html)
+        // Redirect to the management panel
         setTimeout(() => {
           window.location.href = "panel.html";
-        }, 300);
+        }, 200);
       } else {
         // INCORRECT CREDENTIALS - MENTION CLEARLY
         alertBox.classList.remove("hidden");

@@ -30,11 +30,26 @@
     }
   </script>
   <style>
-    /* iOS input zoom prevention: input font must be at least 16px on mobile */
-    @media screen and (max-width: 768px) {
+    /* Mobile & iPad / Tablet touch optimization:
+       - 16px font prevents iOS Safari from auto-zooming and locking the viewport
+       - 48px min-height ensures tap targets meet Apple & Google touch guidelines
+       - touch-action manipulation removes mobile 300ms tap delay
+    */
+    @media screen and (max-width: 1024px) {
       input, select, textarea {
         font-size: 16px !important;
+        min-height: 48px !important;
       }
+      button, a, label {
+        touch-action: manipulation;
+      }
+    }
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      overflow-x: hidden;
+      width: 100%;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #F3F4F6; }
@@ -42,9 +57,206 @@
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
   </style>
   <script>
-    // AUTH CHECK: Must be logged in to view panel
-    if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true") {
+    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage)
+    if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true" && localStorage.getItem("mmestate_admin_authenticated") !== "true") {
       window.location.href = "admin.html";
+    }
+
+    // ============================================================
+    // STANDALONE SMART CALCULATOR (LOADED IN HEAD SO READY INSTANTLY)
+    // ============================================================
+    const GUNTHA_PER_VIGHA = 23.50;
+    const VAAR_PER_GUNTHA = 121.0;
+    const SQFEET_PER_VAAR = 9.0;
+    const GUNTHA_PER_ACRE = 40.0;
+    const SQMTR_PER_VIGHA = 2378.0;
+    const SQMTR_PER_GUNTHA = SQMTR_PER_VIGHA / GUNTHA_PER_VIGHA; // 101.1915
+    const GUNTHA_PER_HECTARE = 4.21 * GUNTHA_PER_VIGHA; // 98.935
+
+    // Initialized with pre-calculated values for 52 Guntha @ ₹1,50,00,000/Vigha
+    let currentCalculatedArea = {
+      guntha: 52,
+      vigha: 2.213,
+      acre: 1.3,
+      vaar: 6292,
+      sqmtr: 5261.96,
+      hectare: 0.526,
+      sqfeet: 56628,
+      totalPrice: 33191489,
+      pricePerVigha: 15000000,
+      pricePerGuntha: 638298,
+      pricePerAcre: 25531915,
+      pricePerVaar: 5275
+    };
+
+    // Convert Gujarati digits (૦,૧,૨,૩,૪,૫,૬,૭,૮,૯) to English (0-9)
+    function toEnglishDigits(str) {
+      if (!str) return '';
+      const guj = {'૦':'0','૧':'1','૨':'2','૩':'3','૪':'4','૫':'5','૬':'6','૭':'7','૮':'8','૯':'9'};
+      return String(str).replace(/[૦-૯]/g, d => guj[d] || d);
+    }
+
+    // Clean inputs: handles Gujarati numerals, Indian commas (e.g. 1,50,00,000)
+    function cleanNumberInput(val) {
+      if (val === null || val === undefined) return 0;
+      const eng = toEnglishDigits(String(val));
+      const cleaned = eng.replace(/[^0-9.]/g, '');
+      return parseFloat(cleaned) || 0;
+    }
+
+    function round(num, decimals) {
+      const factor = Math.pow(10, decimals);
+      return Math.round((num + Number.EPSILON) * factor) / factor;
+    }
+
+    function formatIndianCurrencyWords(num) {
+      if (!num || num <= 0) return '';
+      if (num >= 10000000) {
+        return `(${round(num / 10000000, 2)} Crore)`;
+      } else if (num >= 100000) {
+        return `(${round(num / 100000, 2)} Lakh)`;
+      } else if (num >= 1000) {
+        return `(${round(num / 1000, 2)} Thousand)`;
+      }
+      return '';
+    }
+
+    function safeSetText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
+    }
+
+    // Primary Instant Live Calculation Function
+    function calculateLand() {
+      const areaInput = document.getElementById("inputAreaValue");
+      const unitInput = document.getElementById("inputAreaUnit");
+      const priceInput = document.getElementById("inputPriceValue");
+      const typeInput = document.getElementById("inputPriceType");
+
+      if (!areaInput || !unitInput || !priceInput || !typeInput) return;
+
+      const areaVal = cleanNumberInput(areaInput.value);
+      const areaUnit = unitInput.value;
+      const priceVal = cleanNumberInput(priceInput.value);
+      const priceType = typeInput.value;
+
+      // 1. Convert input to base unit: GUNTHA
+      let baseGuntha = 0;
+      if (areaUnit === 'guntha') baseGuntha = areaVal;
+      else if (areaUnit === 'vigha') baseGuntha = areaVal * GUNTHA_PER_VIGHA;
+      else if (areaUnit === 'acre') baseGuntha = areaVal * GUNTHA_PER_ACRE;
+      else if (areaUnit === 'hectare') baseGuntha = areaVal * GUNTHA_PER_HECTARE;
+      else if (areaUnit === 'vaar') baseGuntha = areaVal / VAAR_PER_GUNTHA;
+      else if (areaUnit === 'sqmeter') baseGuntha = areaVal / SQMTR_PER_GUNTHA;
+      else if (areaUnit === 'sqfeet') baseGuntha = (areaVal / SQFEET_PER_VAAR) / VAAR_PER_GUNTHA;
+
+      // 2. Derive all other measurements
+      const vigha = baseGuntha / GUNTHA_PER_VIGHA;
+      const acre = baseGuntha / GUNTHA_PER_ACRE;
+      const vaar = baseGuntha * VAAR_PER_GUNTHA;
+      const sqfeet = vaar * SQFEET_PER_VAAR;
+      const sqmtr = baseGuntha * SQMTR_PER_GUNTHA;
+      const hectare = baseGuntha / GUNTHA_PER_HECTARE;
+
+      // 3. Derive Pricing
+      let totalPrice = 0;
+      let pricePerVigha = 0;
+      let pricePerGuntha = 0;
+      let pricePerAcre = 0;
+      let pricePerVaar = 0;
+
+      if (priceVal > 0) {
+        if (priceType === 'per_vigha') {
+          pricePerVigha = priceVal;
+          pricePerGuntha = priceVal / GUNTHA_PER_VIGHA;
+          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
+          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
+          totalPrice = vigha * pricePerVigha;
+        } else if (priceType === 'per_guntha') {
+          pricePerGuntha = priceVal;
+          pricePerVigha = priceVal * GUNTHA_PER_VIGHA;
+          pricePerAcre = priceVal * GUNTHA_PER_ACRE;
+          pricePerVaar = priceVal / VAAR_PER_GUNTHA;
+          totalPrice = baseGuntha * pricePerGuntha;
+        } else if (priceType === 'per_acre') {
+          pricePerAcre = priceVal;
+          pricePerGuntha = priceVal / GUNTHA_PER_ACRE;
+          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
+          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
+          totalPrice = acre * pricePerAcre;
+        } else if (priceType === 'per_vaar') {
+          pricePerVaar = priceVal;
+          pricePerGuntha = priceVal * VAAR_PER_GUNTHA;
+          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
+          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
+          totalPrice = vaar * pricePerVaar;
+        } else if (priceType === 'total_price') {
+          totalPrice = priceVal;
+          if (vigha > 0) pricePerVigha = totalPrice / vigha;
+          if (baseGuntha > 0) pricePerGuntha = totalPrice / baseGuntha;
+          if (acre > 0) pricePerAcre = totalPrice / acre;
+          if (vaar > 0) pricePerVaar = totalPrice / vaar;
+        }
+      }
+
+      currentCalculatedArea = {
+        guntha: round(baseGuntha, 3),
+        vigha: round(vigha, 3),
+        acre: round(acre, 3),
+        vaar: round(vaar, 2),
+        sqmtr: round(sqmtr, 2),
+        hectare: round(hectare, 3),
+        sqfeet: round(sqfeet, 1),
+        totalPrice: Math.round(totalPrice),
+        pricePerVigha: Math.round(pricePerVigha),
+        pricePerGuntha: Math.round(pricePerGuntha),
+        pricePerAcre: Math.round(pricePerAcre),
+        pricePerVaar: Math.round(pricePerVaar)
+      };
+
+      // Direct Real-Time DOM Update
+      safeSetText("calcVigha", currentCalculatedArea.vigha);
+      safeSetText("calcGuntha", currentCalculatedArea.guntha);
+      safeSetText("calcAcre", currentCalculatedArea.acre);
+      safeSetText("calcVaar", currentCalculatedArea.vaar.toLocaleString('en-IN'));
+      safeSetText("calcSqMtr", currentCalculatedArea.sqmtr.toLocaleString('en-IN'));
+      safeSetText("calcHectare", currentCalculatedArea.hectare);
+      safeSetText("calcSqFeet", currentCalculatedArea.sqfeet.toLocaleString('en-IN'));
+
+      safeSetText("displayTotalPrice", "Total: ₹" + currentCalculatedArea.totalPrice.toLocaleString('en-IN'));
+      safeSetText("displayTotalPriceWords", formatIndianCurrencyWords(currentCalculatedArea.totalPrice));
+
+      safeSetText("ratePerVigha", "₹" + currentCalculatedArea.pricePerVigha.toLocaleString('en-IN'));
+      safeSetText("ratePerGuntha", "₹" + currentCalculatedArea.pricePerGuntha.toLocaleString('en-IN'));
+      safeSetText("ratePerAcre", "₹" + currentCalculatedArea.pricePerAcre.toLocaleString('en-IN'));
+      safeSetText("ratePerVaar", "₹" + currentCalculatedArea.pricePerVaar.toLocaleString('en-IN'));
+    }
+
+    function setupCalculatorListeners() {
+      const areaInput = document.getElementById("inputAreaValue");
+      const unitInput = document.getElementById("inputAreaUnit");
+      const priceInput = document.getElementById("inputPriceValue");
+      const typeInput = document.getElementById("inputPriceType");
+
+      const events = ['input', 'keyup', 'change', 'paste', 'blur'];
+      [areaInput, priceInput].forEach(el => {
+        if (el) {
+          events.forEach(ev => el.addEventListener(ev, calculateLand));
+        }
+      });
+      [unitInput, typeInput].forEach(el => {
+        if (el) {
+          el.addEventListener('change', calculateLand);
+        }
+      });
+
+      calculateLand();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupCalculatorListeners);
+    } else {
+      setupCalculatorListeners();
     }
   </script>
 </head>
@@ -155,15 +367,17 @@
         </div>
 
         <!-- Two Core Interactive Inputs (Mobile & Tablet Friendly) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-50/50 p-4 sm:p-5 rounded-2xl border border-purple-100 mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-50/60 p-4 sm:p-5 rounded-2xl border border-purple-200 mb-5">
           <!-- Area Input Box -->
           <div>
-            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
               Enter Land Area (જમીનનું માપ દાખલ કરો)
             </label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input id="inputAreaValue" type="text" inputmode="decimal" placeholder="e.g. 52" value="52" class="w-full sm:w-3/5 px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-slate-900 outline-none shadow-xs"/>
-              <select id="inputAreaUnit" class="w-full sm:w-2/5 px-3 py-2.5 text-sm sm:text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-xs">
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <input id="inputAreaValue" type="text" inputmode="decimal" placeholder="e.g. 52" value="52"
+                     oninput="calculateLand()" onkeyup="calculateLand()" onchange="calculateLand()" onpaste="calculateLand()"
+                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-xs transition"/>
+              <select id="inputAreaUnit" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-xs transition">
                 <option value="guntha" selected>Guntha (ગુંઠા)</option>
                 <option value="vigha">Vigha (વિઘા)</option>
                 <option value="acre">Acre (એકર)</option>
@@ -177,12 +391,14 @@
 
           <!-- Price Input Box -->
           <div>
-            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
               Enter Price Rate (ભાવ / કિંમત)
             </label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input id="inputPriceValue" type="text" inputmode="decimal" placeholder="e.g. 15000000" value="15000000" class="w-full sm:w-3/5 px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-slate-900 outline-none shadow-xs"/>
-              <select id="inputPriceType" class="w-full sm:w-2/5 px-3 py-2.5 text-sm sm:text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-xs">
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <input id="inputPriceValue" type="text" inputmode="decimal" placeholder="e.g. 15000000" value="15000000"
+                     oninput="calculateLand()" onkeyup="calculateLand()" onchange="calculateLand()" onpaste="calculateLand()"
+                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-xs transition"/>
+              <select id="inputPriceType" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-xs transition">
                 <option value="per_vigha" selected>Per Vigha (વિઘા દીઠ)</option>
                 <option value="per_guntha">Per Guntha (ગુંઠા દીઠ)</option>
                 <option value="per_acre">Per Acre (એકર દીઠ)</option>
@@ -194,52 +410,52 @@
         </div>
 
         <!-- LIVE AUTO-CALCULATED RESULTS BREAKDOWN -->
-        <div class="bg-white border-2 border-brand-100 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+        <div class="bg-white border-2 border-brand-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
             <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">
               Calculated Breakdown Across All Units (આપોઆપ ગણતરી):
             </span>
             <div class="text-left sm:text-right">
-              <span id="displayTotalPrice" class="text-base sm:text-lg font-extrabold text-brand-600 block">Total: ₹0</span>
-              <span id="displayTotalPriceWords" class="text-[11px] font-semibold text-slate-500 block"></span>
+              <span id="displayTotalPrice" class="text-base sm:text-xl font-extrabold text-brand-600 block">Total: ₹3,31,91,489</span>
+              <span id="displayTotalPriceWords" class="text-xs font-semibold text-slate-500 block">(3.32 Crore)</span>
             </div>
           </div>
 
           <!-- Unit Conversion Cards (Responsive 2 cols on mobile, 4 on tablet, 7 on desktop) -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 text-center">
-            <div class="p-3 bg-purple-50/80 border border-purple-200 rounded-xl">
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3 text-center">
+            <div class="p-3 bg-purple-50/90 border border-purple-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-purple-700">Vigha (વિઘા)</p>
-              <p id="calcVigha" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcVigha" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">2.213</p>
             </div>
 
             <div class="p-3 bg-brand-50 border border-brand-300 rounded-xl ring-2 ring-brand-400/20">
               <p class="text-[10px] uppercase font-bold text-brand-700">Guntha (ગુંઠા)</p>
-              <p id="calcGuntha" class="text-base sm:text-lg font-black text-brand-700 mt-0.5">0</p>
+              <p id="calcGuntha" class="text-base sm:text-lg font-black text-brand-700 mt-0.5">52</p>
             </div>
 
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Acre (એકર)</p>
-              <p id="calcAcre" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcAcre" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">1.3</p>
             </div>
 
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Yard (વાર)</p>
-              <p id="calcVaar" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcVaar" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">6,292</p>
             </div>
 
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Mtr (ચો.મી.)</p>
-              <p id="calcSqMtr" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcSqMtr" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">5,261.96</p>
             </div>
 
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Hectare (હેકટર)</p>
-              <p id="calcHectare" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcHectare" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0.526</p>
             </div>
 
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl col-span-2 sm:col-span-1">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Feet (ફૂટ)</p>
-              <p id="calcSqFeet" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0</p>
+              <p id="calcSqFeet" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">56,628</p>
             </div>
           </div>
 
@@ -247,19 +463,19 @@
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 pt-2 text-xs">
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
               <span class="text-slate-500 text-[11px]">Rate / Vigha (વિઘા ભાવ)</span>
-              <span id="ratePerVigha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹0</span>
+              <span id="ratePerVigha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹1,50,00,000</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
               <span class="text-slate-500 text-[11px]">Rate / Guntha (ગુંઠા ભાવ)</span>
-              <span id="ratePerGuntha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹0</span>
+              <span id="ratePerGuntha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹6,38,298</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
               <span class="text-slate-500 text-[11px]">Rate / Acre (એકર ભાવ)</span>
-              <span id="ratePerAcre" class="font-extrabold text-slate-900 text-sm mt-0.5">₹0</span>
+              <span id="ratePerAcre" class="font-extrabold text-slate-900 text-sm mt-0.5">₹2,55,31,915</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
               <span class="text-slate-500 text-[11px]">Rate / Vaar (વાર ભાવ)</span>
-              <span id="ratePerVaar" class="font-extrabold text-slate-900 text-sm mt-0.5">₹0</span>
+              <span id="ratePerVaar" class="font-extrabold text-slate-900 text-sm mt-0.5">₹5,275</span>
             </div>
           </div>
         </div>
@@ -562,11 +778,11 @@
           No catalog entries found yet. Use the form above to add your first property or land!
         </div>
 
-        <!-- MOBILE / TABLET CARD VIEW (Visible on screens < 768px) -->
-        <div id="propertiesCardsMobile" class="hidden md:hidden space-y-3"></div>
+        <!-- MOBILE & TABLET / IPAD CARD VIEW (Active on phones & tablets < 1024px) -->
+        <div id="propertiesCardsMobile" class="hidden lg:hidden space-y-3"></div>
 
-        <!-- DESKTOP TABLE VIEW (Visible on screens >= 768px) -->
-        <div id="propertiesTableContainer" class="hidden md:block overflow-x-auto">
+        <!-- DESKTOP TABLE VIEW (Active on screens >= 1024px) -->
+        <div id="propertiesTableContainer" class="hidden lg:block overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] border-b border-slate-100">
               <tr>
@@ -594,204 +810,7 @@
     <span id="toastMessage">Notification</span>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- STANDALONE SMART CALCULATOR LOGIC (RUNS INSTANTLY WITH NO DEPENDENCIES) -->
-  <!-- ============================================================ -->
-  <script>
-    // Exact Gujarati Land Measurement Conversions
-    const GUNTHA_PER_VIGHA = 23.50;
-    const VAAR_PER_GUNTHA = 121.0;
-    const SQFEET_PER_VAAR = 9.0;
-    const GUNTHA_PER_ACRE = 40.0;
-    const SQMTR_PER_VIGHA = 2378.0;
-    const SQMTR_PER_GUNTHA = SQMTR_PER_VIGHA / GUNTHA_PER_VIGHA; // 101.1915
-    const GUNTHA_PER_HECTARE = 4.21 * GUNTHA_PER_VIGHA; // 98.935
 
-    let currentCalculatedArea = {
-      guntha: 0,
-      vigha: 0,
-      acre: 0,
-      vaar: 0,
-      sqmtr: 0,
-      hectare: 0,
-      sqfeet: 0,
-      totalPrice: 0,
-      pricePerVigha: 0,
-      pricePerGuntha: 0,
-      pricePerAcre: 0,
-      pricePerVaar: 0
-    };
-
-    // Primary Instant Calculation Function
-    function calculateLand() {
-      const areaInput = document.getElementById("inputAreaValue");
-      const unitInput = document.getElementById("inputAreaUnit");
-      const priceInput = document.getElementById("inputPriceValue");
-      const typeInput = document.getElementById("inputPriceType");
-
-      if (!areaInput || !unitInput || !priceInput || !typeInput) return;
-
-      // Clean inputs (handle commas like 1,50,00,000)
-      const cleanAreaStr = String(areaInput.value || '').replace(/,/g, '').trim();
-      const cleanPriceStr = String(priceInput.value || '').replace(/,/g, '').trim();
-
-      const areaVal = parseFloat(cleanAreaStr) || 0;
-      const areaUnit = unitInput.value;
-      const priceVal = parseFloat(cleanPriceStr) || 0;
-      const priceType = typeInput.value;
-
-      // 1. Convert input to base unit: GUNTHA
-      let baseGuntha = 0;
-      if (areaUnit === 'guntha') {
-        baseGuntha = areaVal;
-      } else if (areaUnit === 'vigha') {
-        baseGuntha = areaVal * GUNTHA_PER_VIGHA;
-      } else if (areaUnit === 'acre') {
-        baseGuntha = areaVal * GUNTHA_PER_ACRE;
-      } else if (areaUnit === 'hectare') {
-        baseGuntha = areaVal * GUNTHA_PER_HECTARE;
-      } else if (areaUnit === 'vaar') {
-        baseGuntha = areaVal / VAAR_PER_GUNTHA;
-      } else if (areaUnit === 'sqmeter') {
-        baseGuntha = areaVal / SQMTR_PER_GUNTHA;
-      } else if (areaUnit === 'sqfeet') {
-        baseGuntha = (areaVal / SQFEET_PER_VAAR) / VAAR_PER_GUNTHA;
-      }
-
-      // 2. Derive all other measurements
-      const vigha = baseGuntha / GUNTHA_PER_VIGHA;
-      const acre = baseGuntha / GUNTHA_PER_ACRE;
-      const vaar = baseGuntha * VAAR_PER_GUNTHA;
-      const sqfeet = vaar * SQFEET_PER_VAAR;
-      const sqmtr = baseGuntha * SQMTR_PER_GUNTHA;
-      const hectare = baseGuntha / GUNTHA_PER_HECTARE;
-
-      // 3. Derive Pricing
-      let totalPrice = 0;
-      let pricePerVigha = 0;
-      let pricePerGuntha = 0;
-      let pricePerAcre = 0;
-      let pricePerVaar = 0;
-
-      if (priceVal > 0) {
-        if (priceType === 'per_vigha') {
-          pricePerVigha = priceVal;
-          pricePerGuntha = priceVal / GUNTHA_PER_VIGHA;
-          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
-          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
-          totalPrice = vigha * pricePerVigha;
-        } else if (priceType === 'per_guntha') {
-          pricePerGuntha = priceVal;
-          pricePerVigha = priceVal * GUNTHA_PER_VIGHA;
-          pricePerAcre = priceVal * GUNTHA_PER_ACRE;
-          pricePerVaar = priceVal / VAAR_PER_GUNTHA;
-          totalPrice = baseGuntha * pricePerGuntha;
-        } else if (priceType === 'per_acre') {
-          pricePerAcre = priceVal;
-          pricePerGuntha = priceVal / GUNTHA_PER_ACRE;
-          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
-          pricePerVaar = pricePerGuntha / VAAR_PER_GUNTHA;
-          totalPrice = acre * pricePerAcre;
-        } else if (priceType === 'per_vaar') {
-          pricePerVaar = priceVal;
-          pricePerGuntha = priceVal * VAAR_PER_GUNTHA;
-          pricePerVigha = pricePerGuntha * GUNTHA_PER_VIGHA;
-          pricePerAcre = pricePerGuntha * GUNTHA_PER_ACRE;
-          totalPrice = vaar * pricePerVaar;
-        } else if (priceType === 'total_price') {
-          totalPrice = priceVal;
-          if (vigha > 0) pricePerVigha = totalPrice / vigha;
-          if (baseGuntha > 0) pricePerGuntha = totalPrice / baseGuntha;
-          if (acre > 0) pricePerAcre = totalPrice / acre;
-          if (vaar > 0) pricePerVaar = totalPrice / vaar;
-        }
-      }
-
-      currentCalculatedArea = {
-        guntha: round(baseGuntha, 3),
-        vigha: round(vigha, 3),
-        acre: round(acre, 3),
-        vaar: round(vaar, 2),
-        sqmtr: round(sqmtr, 2),
-        hectare: round(hectare, 3),
-        sqfeet: round(sqfeet, 1),
-        totalPrice: Math.round(totalPrice),
-        pricePerVigha: Math.round(pricePerVigha),
-        pricePerGuntha: Math.round(pricePerGuntha),
-        pricePerAcre: Math.round(pricePerAcre),
-        pricePerVaar: Math.round(pricePerVaar)
-      };
-
-      // Direct DOM Update
-      safeSetText("calcVigha", currentCalculatedArea.vigha);
-      safeSetText("calcGuntha", currentCalculatedArea.guntha);
-      safeSetText("calcAcre", currentCalculatedArea.acre);
-      safeSetText("calcVaar", currentCalculatedArea.vaar.toLocaleString());
-      safeSetText("calcSqMtr", currentCalculatedArea.sqmtr.toLocaleString());
-      safeSetText("calcHectare", currentCalculatedArea.hectare);
-      safeSetText("calcSqFeet", currentCalculatedArea.sqfeet.toLocaleString());
-
-      safeSetText("displayTotalPrice", "Total: ₹" + currentCalculatedArea.totalPrice.toLocaleString('en-IN'));
-      safeSetText("displayTotalPriceWords", formatIndianCurrencyWords(currentCalculatedArea.totalPrice));
-
-      safeSetText("ratePerVigha", "₹" + currentCalculatedArea.pricePerVigha.toLocaleString('en-IN'));
-      safeSetText("ratePerGuntha", "₹" + currentCalculatedArea.pricePerGuntha.toLocaleString('en-IN'));
-      safeSetText("ratePerAcre", "₹" + currentCalculatedArea.pricePerAcre.toLocaleString('en-IN'));
-      safeSetText("ratePerVaar", "₹" + currentCalculatedArea.pricePerVaar.toLocaleString('en-IN'));
-    }
-
-    function safeSetText(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.innerText = text;
-    }
-
-    function round(num, decimals) {
-      const factor = Math.pow(10, decimals);
-      return Math.round((num + Number.EPSILON) * factor) / factor;
-    }
-
-    // Convert large Indian numbers into readable text (e.g. 3.32 Crore / Lakh)
-    function formatIndianCurrencyWords(num) {
-      if (!num || num <= 0) return '';
-      if (num >= 10000000) {
-        return `(${round(num / 10000000, 2)} Crore)`;
-      } else if (num >= 100000) {
-        return `(${round(num / 100000, 2)} Lakh)`;
-      } else if (num >= 1000) {
-        return `(${round(num / 1000, 2)} Thousand)`;
-      }
-      return '';
-    }
-
-    // Attach robust instant listeners to all calculator inputs
-    function setupCalculatorListeners() {
-      const areaInput = document.getElementById("inputAreaValue");
-      const unitInput = document.getElementById("inputAreaUnit");
-      const priceInput = document.getElementById("inputPriceValue");
-      const typeInput = document.getElementById("inputPriceType");
-
-      const events = ['input', 'keyup', 'change', 'paste', 'blur'];
-      [areaInput, priceInput].forEach(el => {
-        if (el) {
-          events.forEach(ev => el.addEventListener(ev, calculateLand));
-        }
-      });
-      [unitInput, typeInput].forEach(el => {
-        if (el) {
-          el.addEventListener('change', calculateLand);
-        }
-      });
-
-      // Run once immediately on load
-      calculateLand();
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupCalculatorListeners);
-    } else {
-      setupCalculatorListeners();
-    }
-  </script>
 
   <!-- ============================================================ -->
   <!-- SUPABASE & FORM LOGIC -->
@@ -818,6 +837,7 @@
 
     function logoutAdmin() {
       sessionStorage.removeItem("mmestate_admin_authenticated");
+      localStorage.removeItem("mmestate_admin_authenticated");
       window.location.href = "admin.html";
     }
 
