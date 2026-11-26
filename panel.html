@@ -61,12 +61,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
   </style>
   <script>
-    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage + auth query bypass)
-    const panelUrlParams = new URLSearchParams(window.location.search);
-    if (panelUrlParams.get("auth") === "1963" || panelUrlParams.get("autologin") === "1") {
-      sessionStorage.setItem("mmestate_admin_authenticated", "true");
-      localStorage.setItem("mmestate_admin_authenticated", "true");
-    }
+    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage)
     if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true" && localStorage.getItem("mmestate_admin_authenticated") !== "true") {
       window.location.href = "admin.html";
     }
@@ -765,13 +760,21 @@
               </span>
             </div>
 
-            <!-- Drop Zone / Browse Button (Native HTML Label for 100% Reliable File Picker on All Devices) -->
-            <label for="fileInput" id="dropZone" 
+            <!-- Hidden File Input (Outside of clickable box to avoid double activation) -->
+            <input id="fileInput" 
+                   type="file" 
+                   multiple 
+                   accept="image/*,video/*" 
+                   class="hidden" 
+                   onchange="handleFileSelect(event)" />
+
+            <!-- Drop Zone / Browse Box -->
+            <div id="dropZone" 
+                 onclick="openMediaPicker(event)"
                  ondragover="handleDragOver(event)" 
                  ondragleave="handleDragLeave(event)" 
                  ondrop="handleDrop(event)"
-                 class="block border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
-              <input id="fileInput" type="file" multiple accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.quicktime,.m4v" class="sr-only" onchange="handleFileSelect(event)"/>
+                 class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
               
               <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
@@ -781,11 +784,14 @@
                   <span class="text-brand-600 underline">Tap to browse Photos &amp; Videos</span> or Drag files here
                 </p>
                 <p class="text-xs text-slate-400">Supports Mobile Gallery, Camera, Google Photos, Desktop files (JPG, PNG, WEBP, MP4, MOV)</p>
-                <div class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow-sm">
-                  <span>📁 Select from Gallery / Files</span>
-                </div>
               </div>
-            </label>
+
+              <div class="mt-3 flex justify-center">
+                <button type="button" onclick="openMediaPicker(event)" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition cursor-pointer">
+                  <span>📁 Select from Gallery / Files</span>
+                </button>
+              </div>
+            </div>
 
             <!-- Upload Progress Bar -->
             <div id="uploadProgressContainer" class="hidden p-3 bg-brand-50 border border-brand-200 rounded-xl">
@@ -839,22 +845,22 @@
           </button>
         </div>
 
-        <div id="propertiesLoading" class="py-10 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+        <div id="propertiesLoading" class="py-8 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
           <div class="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
           <span>Loading catalog from Supabase...</span>
         </div>
 
-        <div id="propertiesEmpty" class="hidden py-10 text-center text-slate-400 text-xs">
+        <div id="propertiesEmpty" class="hidden py-10 text-center text-slate-400 text-xs bg-slate-50 border border-dashed border-slate-200 rounded-xl">
           No catalog entries found yet. Use the form above to add your first property or land!
         </div>
 
-        <!-- PROPERTIES CATALOG LIST WRAPPER -->
-        <div id="propertiesListWrapper" class="hidden">
-          <!-- MOBILE & TABLET / IPAD CARD VIEW (Active on phones & tablets < 1024px) -->
-          <div id="propertiesCardsMobile" class="block lg:hidden space-y-3"></div>
+        <!-- PROPERTIES CATALOG LIST WRAPPER (Visible across all screen sizes) -->
+        <div id="propertiesListWrapper">
+          <!-- LIVE CARDS GRID (Always visible on phones, iPad, tablets & desktop) -->
+          <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
 
-          <!-- DESKTOP TABLE VIEW (Active on screens >= 1024px) -->
-          <div id="propertiesTableContainer" class="hidden lg:block overflow-x-auto">
+          <!-- DESKTOP TABLE VIEW (Visible on XL screens) -->
+          <div id="propertiesTableContainer" class="hidden xl:block overflow-x-auto border border-slate-100 rounded-xl">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] border-b border-slate-100">
                 <tr>
@@ -981,19 +987,25 @@
       }
     }
 
-    function triggerFileInput(e) {
+    function openMediaPicker(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const fi = document.getElementById("fileInput");
-      if (fi) fi.click();
+      if (fi) {
+        fi.click();
+      }
     }
 
     function handleFileSelect(e) {
-      if (e && e.target && e.target.files && e.target.files.length > 0) {
-        const files = Array.from(e.target.files);
-        addFiles(files);
-        setTimeout(() => {
-          try { e.target.value = ''; } catch(err) {}
-        }, 100);
-      }
+      const fi = document.getElementById("fileInput");
+      const files = (e && e.target && e.target.files && e.target.files.length > 0)
+        ? Array.from(e.target.files)
+        : (fi && fi.files && fi.files.length > 0 ? Array.from(fi.files) : []);
+
+      if (files.length === 0) return;
+      addFiles(files);
     }
 
     function addFiles(files) {
@@ -1001,28 +1013,35 @@
 
       let addedCount = 0;
       files.forEach(file => {
-        const fileName = file.name || '';
-        const isImage = (file.type && file.type.startsWith("image/")) || /\.(jpe?g|png|webp|gif|heic|heif|bmp|svg)$/i.test(fileName);
-        const isVideo = (file.type && file.type.startsWith("video/")) || /\.(mp4|mov|avi|webm|mkv|3gp|m4v|quicktime)$/i.test(fileName);
+        const fileName = (file.name || 'file').toLowerCase();
+        const mime = (file.type || '').toLowerCase();
+        const isVideo = mime.startsWith("video/") || /\.(mp4|mov|avi|webm|mkv|3gp|m4v|quicktime)$/i.test(fileName);
 
-        if (!isImage && !isVideo) {
-          showToast(`Skipped ${fileName}: only photos & videos allowed`, "error");
-          return;
+        let previewUrl = '';
+        try {
+          previewUrl = URL.createObjectURL(file);
+        } catch (err) {
+          console.warn("ObjectURL failed:", err);
         }
 
-        const previewUrl = URL.createObjectURL(file);
-        selectedMediaFiles.push({ file, type: isVideo ? 'video' : 'image', previewUrl });
+        selectedMediaFiles.push({
+          file: file,
+          type: isVideo ? 'video' : 'image',
+          previewUrl: previewUrl
+        });
         addedCount++;
       });
 
+      renderMediaPreviews();
+
       if (addedCount > 0) {
-        renderMediaPreviews();
-        showToast(`Added ${addedCount} media file(s). You can review or delete them below.`, "success");
-        const gallery = document.getElementById("previewGallery");
-        if (gallery) {
+        showToast(`Added ${addedCount} photo/video file(s). Previews displayed below.`, "success");
+        const previewHeader = document.getElementById("previewHeader");
+        if (previewHeader) {
+          previewHeader.classList.remove("hidden");
           setTimeout(() => {
-            gallery.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }, 150);
+            previewHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
         }
       }
     }
@@ -1476,26 +1495,24 @@
       showToast("Property form & options have been reset", "info");
     }
 
-    // LOAD PROPERTIES FROM SUPABASE (RENDER BOTH MOBILE CARDS & DESKTOP TABLE)
+    // LOAD PROPERTIES FROM SUPABASE (RENDER VISIBLE CARDS ON ALL SCREENS + DESKTOP TABLE)
     async function loadProperties() {
       const loading = document.getElementById("propertiesLoading");
       const empty = document.getElementById("propertiesEmpty");
-      const listWrapper = document.getElementById("propertiesListWrapper");
-      const mobileContainer = document.getElementById("propertiesCardsMobile");
+      const grid = document.getElementById("propertiesGrid");
       const tbody = document.getElementById("propertiesTableBody");
 
       if (loading) loading.classList.remove("hidden");
       if (empty) empty.classList.add("hidden");
-      if (listWrapper) listWrapper.classList.add("hidden");
 
       try {
         let properties = null;
 
-        // 1. Ultra-fast direct REST fetch (bypasses SDK initialization, 50ms)
+        // 1. Ultra-fast direct REST fetch (exact same reliable endpoint used by public site)
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?select=*&order=created_at.desc`, {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?order=created_at.desc`, {
             headers: {
               'apikey': SUPABASE_ANON_KEY,
               'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -1530,112 +1547,153 @@
 
         if (!properties || properties.length === 0) {
           if (empty) empty.classList.remove("hidden");
+          if (grid) grid.innerHTML = "";
+          if (tbody) tbody.innerHTML = "";
           return;
         }
 
-        if (listWrapper) listWrapper.classList.remove("hidden");
-        tbody.innerHTML = "";
-        mobileContainer.innerHTML = "";
+        if (empty) empty.classList.add("hidden");
+        if (grid) grid.innerHTML = "";
+        if (tbody) tbody.innerHTML = "";
 
         properties.forEach(prop => {
           const primaryImage = (prop.images && prop.images.length > 0) 
             ? prop.images[0] 
-            : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80';
+            : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80';
 
           const photoCount = prop.images ? prop.images.length : 0;
           const videoCount = prop.videos ? prop.videos.length : 0;
           const mapLink = getSafeMapUrl(prop);
-          const totalFormatted = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
+          const totalFormatted = Number(prop.total_price || prop.price || 0).toLocaleString('en-IN');
           const dateFormatted = formatDateTime(prop.created_at);
+          const waterStr = Array.isArray(prop.water_facilities) && prop.water_facilities.length > 0 
+            ? prop.water_facilities.join(', ') 
+            : (typeof prop.water_facilities === 'string' ? prop.water_facilities : 'None');
 
-          // 1. DESKTOP ROW
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-slate-50 transition";
-          tr.innerHTML = `
-            <td class="py-3 px-3">
-              <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200">
-                <img src="${primaryImage}" class="w-full h-full object-cover"/>
-                ${videoCount > 0 ? `<span class="absolute bottom-0 right-0 bg-purple-700 text-white text-[8px] font-bold px-1 rounded-tl">🎥</span>` : ''}
-              </div>
-            </td>
-            <td class="py-3 px-3">
-              <p class="font-bold text-slate-900 leading-tight">${escapeHtml(prop.title)}</p>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="text-[11px] text-brand-600 font-semibold">${escapeHtml(prop.property_type)}</span>
-                <span class="text-[10px] text-slate-400">📅 ${dateFormatted}</span>
-              </div>
-            </td>
-            <td class="py-3 px-3">
-              <p class="font-bold text-slate-900">₹${totalFormatted}</p>
-              <p class="text-[11px] text-slate-500 font-medium">
-                ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha (${prop.land_area_guntha} Guntha)` : 'Custom'}
-              </p>
-            </td>
-            <td class="py-3 px-3 text-slate-600">
-              <p class="truncate max-w-[140px]">${escapeHtml(prop.location)}</p>
-              ${mapLink ? `
-                <a href="${escapeHtml(mapLink)}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold hover:underline">
-                  <span>Map 📍</span>
-                </a>
-              ` : ''}
-            </td>
-            <td class="py-3 px-3 text-[11px] text-slate-600">
-              <p><span class="font-semibold">7/12:</span> ${escapeHtml(prop.names_in_7_12 || 'N/A')}</p>
-              <p><span class="font-semibold">Road:</span> ${escapeHtml(prop.road_type || 'N/A')}</p>
-            </td>
-            <td class="py-3 px-3 text-[11px] text-slate-600">
-              <p><span class="font-semibold">Water:</span> ${prop.water_facilities && prop.water_facilities.length > 0 ? prop.water_facilities.join(', ') : 'None'}</p>
-              <p><span class="font-semibold">Light:</span> ${escapeHtml(prop.light_electricity || 'Yes')}</p>
-            </td>
-            <td class="py-3 px-3">
-              <div class="flex items-center gap-1 text-[11px]">
-                <span class="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700 font-semibold">${photoCount} 📷</span>
-                ${videoCount > 0 ? `<span class="px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded font-semibold">${videoCount} 🎥</span>` : ''}
-              </div>
-            </td>
-            <td class="py-3 px-3 text-right">
-              <div class="flex items-center justify-end gap-1.5">
-                <button onclick="editProperty('${prop.id}')" class="px-2.5 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-lg transition flex items-center gap-1" title="Edit Property">
-                  <span>✏️ Edit</span>
-                </button>
-                <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Delete">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(tr);
+          // 1. RESPONSIVE PROPERTY CARD (Visible on Phones, iPads, Tablets, Laptops & Desktops)
+          if (grid) {
+            const card = document.createElement("div");
+            card.className = "bg-white border border-slate-200 hover:border-brand-300 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between";
+            card.innerHTML = `
+              <div>
+                <div class="relative h-48 w-full overflow-hidden bg-slate-900">
+                  <img src="${primaryImage}" alt="${escapeHtml(prop.title)}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80'"/>
+                  <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
+                    <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-brand-600 text-white shadow-xs">
+                      ${escapeHtml(prop.property_type || 'Land')}
+                    </span>
+                    ${videoCount > 0 ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-700 text-white shadow-xs">🎥 ${videoCount} Video</span>` : ''}
+                  </div>
+                  <div class="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] font-bold text-white bg-slate-900/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                    <span>📷 ${photoCount} Photos</span>
+                  </div>
+                  <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-xl text-xs font-black bg-slate-900/90 text-white shadow-md backdrop-blur-xs">
+                    ₹${totalFormatted}
+                  </span>
+                </div>
 
-          // 2. MOBILE CARD (Easy touch targets on phone & iPad)
-          const mobileCard = document.createElement("div");
-          mobileCard.className = "bg-white border border-slate-200 rounded-xl p-3.5 flex gap-3 items-start justify-between shadow-xs";
-          mobileCard.innerHTML = `
-            <div class="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-200">
-              <img src="${primaryImage}" class="w-full h-full object-cover"/>
-              ${videoCount > 0 ? `<span class="absolute bottom-0 right-0 bg-purple-700 text-white text-[8px] font-bold px-1 rounded-tl">🎥</span>` : ''}
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-1 mb-0.5">
-                <h4 class="font-bold text-slate-900 text-xs truncate">${escapeHtml(prop.title)}</h4>
-                <div class="flex items-center gap-1 shrink-0">
-                  <button onclick="editProperty('${prop.id}')" class="px-2 py-0.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-md text-[11px] font-bold transition">✏️ Edit</button>
-                  <button onclick="deleteProperty('${prop.id}', '${escapeHtml(prop.title)}')" class="text-rose-600 p-1" title="Delete">
+                <div class="p-4 space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1">${escapeHtml(prop.title)}</h3>
+                    <span class="text-[10px] text-slate-400 shrink-0">📅 ${dateFormatted}</span>
+                  </div>
+
+                  <p class="text-xs text-slate-500 truncate flex items-center gap-1">
+                    <span>📍 ${escapeHtml(prop.location)}</span>
+                    ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-emerald-600 font-bold hover:underline shrink-0">Map 📍</a>` : ''}
+                  </p>
+
+                  <div class="bg-purple-50/70 p-2.5 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1">
+                    <div class="flex justify-between font-semibold">
+                      <span>Area: ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha` : ''} (${prop.land_area_guntha ? `${prop.land_area_guntha} Guntha` : 'Custom'})</span>
+                      <span class="text-brand-700 font-bold">${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
+                    </div>
+                    <div class="flex justify-between text-[11px] text-slate-500 pt-0.5 border-t border-purple-200/50">
+                      <span>7/12: <strong>${escapeHtml(prop.names_in_7_12 || 'N/A')}</strong></span>
+                      <span>Road: <strong>${escapeHtml((prop.road_type || '').split(' ')[0] || 'N/A')}</strong></span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-500">
+                    <span class="px-2 py-0.5 bg-slate-100 rounded">💧 ${escapeHtml(waterStr)}</span>
+                    <span class="px-2 py-0.5 bg-slate-100 rounded">⚡ Light: ${escapeHtml(prop.light_electricity || 'Yes')}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-2">
+                <button type="button" onclick="editProperty('${prop.id}')" class="flex-1 py-2 px-3 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                  <span>✏️ Edit Details</span>
+                </button>
+                <button type="button" onclick="deleteProperty('${prop.id}')" class="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="Delete Property">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Delete</span>
+                </button>
+              </div>
+            `;
+            grid.appendChild(card);
+          }
+
+          // 2. DESKTOP TABLE ROW
+          if (tbody) {
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-slate-50 transition";
+            tr.innerHTML = `
+              <td class="py-3 px-3">
+                <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200">
+                  <img src="${primaryImage}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80'"/>
+                  ${videoCount > 0 ? `<span class="absolute bottom-0 right-0 bg-purple-700 text-white text-[8px] font-bold px-1 rounded-tl">🎥</span>` : ''}
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <p class="font-bold text-slate-900 leading-tight">${escapeHtml(prop.title)}</p>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  <span class="text-[11px] text-brand-600 font-semibold">${escapeHtml(prop.property_type)}</span>
+                  <span class="text-[10px] text-slate-400">📅 ${dateFormatted}</span>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <p class="font-bold text-slate-900">₹${totalFormatted}</p>
+                <p class="text-[11px] text-slate-500 font-medium">
+                  ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha (${prop.land_area_guntha} Guntha)` : 'Custom'}
+                </p>
+              </td>
+              <td class="py-3 px-3 text-slate-600">
+                <p class="truncate max-w-[140px]">${escapeHtml(prop.location)}</p>
+                ${mapLink ? `
+                  <a href="${escapeHtml(mapLink)}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold hover:underline">
+                    <span>Map 📍</span>
+                  </a>
+                ` : ''}
+              </td>
+              <td class="py-3 px-3 text-[11px] text-slate-600">
+                <p><span class="font-semibold">7/12:</span> ${escapeHtml(prop.names_in_7_12 || 'N/A')}</p>
+                <p><span class="font-semibold">Road:</span> ${escapeHtml(prop.road_type || 'N/A')}</p>
+              </td>
+              <td class="py-3 px-3 text-[11px] text-slate-600">
+                <p><span class="font-semibold">Water:</span> ${escapeHtml(waterStr)}</p>
+                <p><span class="font-semibold">Light:</span> ${escapeHtml(prop.light_electricity || 'Yes')}</p>
+              </td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-1 text-[11px]">
+                  <span class="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700 font-semibold">${photoCount} 📷</span>
+                  ${videoCount > 0 ? `<span class="px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded font-semibold">${videoCount} 🎥</span>` : ''}
+                </div>
+              </td>
+              <td class="py-3 px-3 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button type="button" onclick="editProperty('${prop.id}')" class="px-2.5 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-lg transition flex items-center gap-1 cursor-pointer" title="Edit Property">
+                    <span>✏️ Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteProperty('${prop.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition cursor-pointer" title="Delete">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                 </div>
-              </div>
-              <p class="text-[11px] text-brand-700 font-semibold">${escapeHtml(prop.property_type)} • ₹${totalFormatted}</p>
-              <p class="text-[10px] text-slate-400">📅 ${dateFormatted}</p>
-              <p class="text-[10px] text-slate-500 truncate mt-0.5">${escapeHtml(prop.location)}</p>
-              <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-600 flex-wrap">
-                <span>${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha` : ''}</span>
-                <span>• ${photoCount} 📷</span>
-                ${videoCount > 0 ? `<span>• ${videoCount} 🎥</span>` : ''}
-                ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="text-emerald-600 font-bold ml-auto">Map 📍</a>` : ''}
-              </div>
-            </div>
-          `;
-          mobileContainer.appendChild(mobileCard);
+              </td>
+            `;
+            tbody.appendChild(tr);
+          }
         });
 
       } catch (err) {
@@ -1661,7 +1719,10 @@
       safeSetText("statTotalVideos", totalVideos);
     }
 
-    async function deleteProperty(id, title) {
+    async function deleteProperty(id) {
+      const prop = loadedProperties.find(p => String(p.id) === String(id));
+      const title = prop ? prop.title : 'this property';
+
       if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
       try {
