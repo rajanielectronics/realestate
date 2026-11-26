@@ -300,6 +300,12 @@
       </div>
 
       <div class="flex items-center gap-2">
+        <a href="#liveCatalogSection" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-lg transition" title="Go to Live Catalog">
+          <span>📋 Live Catalog (<span id="headerCatalogCount">1</span>)</span>
+        </a>
+        <a href="#propertyFormSection" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition" title="Add or Edit Property">
+          <span>➕ Add / Edit</span>
+        </a>
         <a href="index.html" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition" title="View Public Website">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="hidden sm:inline">View Site</span>
@@ -760,21 +766,22 @@
               </span>
             </div>
 
-            <!-- Hidden File Input (Activated natively by the label below) -->
+            <!-- Offscreen File Input (Using sr-only instead of hidden so mobile/desktop browsers NEVER block it) -->
             <input id="fileInput" 
                    type="file" 
                    multiple 
                    accept="image/*,video/*" 
-                   class="hidden" 
+                   class="sr-only" 
+                   style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"
                    onchange="handleFileSelect(event)" />
 
-            <!-- Drop Zone Label: Tapping/clicking ANYWHERE natively opens camera / gallery / file chooser on all devices -->
-            <label for="fileInput" 
-                   id="dropZone" 
-                   ondragover="handleDragOver(event)" 
-                   ondragleave="handleDragLeave(event)" 
-                   ondrop="handleDrop(event)"
-                   class="block border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
+            <!-- Drop Zone / Browse Box: Clicking ANYWHERE reliably opens camera / gallery / files -->
+            <div id="dropZone" 
+                 onclick="triggerFilePicker(event)"
+                 ondragover="handleDragOver(event)" 
+                 ondragleave="handleDragLeave(event)" 
+                 ondrop="handleDrop(event)"
+                 class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
               
               <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
@@ -792,7 +799,7 @@
                   <span>📁 Select from Gallery / Files</span>
                 </span>
               </div>
-            </label>
+            </div>
 
             <!-- Upload Progress Bar -->
             <div id="uploadProgressContainer" class="hidden p-3 bg-brand-50 border border-brand-200 rounded-xl">
@@ -831,7 +838,7 @@
       <!-- ============================================================ -->
       <!-- LIVE CATALOG LISTINGS (MOBILE CARDS + DESKTOP TABLE) -->
       <!-- ============================================================ -->
-      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
+      <section id="liveCatalogSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 scroll-mt-20">
         <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -993,7 +1000,7 @@
       }
     }
 
-    function openMediaPicker(e) {
+    function triggerFilePicker(e) {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -1002,6 +1009,10 @@
       if (fi) {
         fi.click();
       }
+    }
+
+    function openMediaPicker(e) {
+      triggerFilePicker(e);
     }
 
     function handleFileSelect(e) {
@@ -1520,18 +1531,14 @@
       try {
         let properties = null;
 
-        // 1. Ultra-fast direct REST fetch (exact same reliable endpoint used by public site)
+        // 1. Ultra-fast direct REST fetch (exact same reliable endpoint used by public site, without early abort timeout)
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 6000);
           const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?order=created_at.desc`, {
             headers: {
               'apikey': SUPABASE_ANON_KEY,
               'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-            },
-            signal: controller.signal
+            }
           });
-          clearTimeout(timeoutId);
           if (res.ok) {
             properties = await res.json();
           }
@@ -1721,6 +1728,7 @@
 
     function updateStats(properties) {
       safeSetText("statTotalProperties", properties.length);
+      safeSetText("headerCatalogCount", properties.length);
       safeSetText("statLandCount", properties.filter(p => (p.property_type || '').toLowerCase().includes('land')).length);
 
       let totalPhotos = 0;
