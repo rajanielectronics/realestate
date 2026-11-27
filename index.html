@@ -52,6 +52,52 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #9CA3AF;
     }
+
+    /* Luxury Real Estate Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes pulseBeacon {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+      }
+    }
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .anim-fade-in {
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .card-hover-lift {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-hover-lift:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12), 0 10px 15px -5px rgba(0, 0, 0, 0.04);
+    }
+    .modal-sheet-anim {
+      animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .tap-scale:active {
+      transform: scale(0.96);
+    }
 </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex font-sans">
@@ -258,21 +304,21 @@
     </button>
   </div>
 
-  <!-- Horizontal Scrollable Touch Chips (Native Mobile App Feel) -->
+  <!-- Horizontal Scrollable Touch Chips (Native Mobile App Feel with Animation) -->
   <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar select-none text-xs">
-    <button type="button" onclick="filterPublicCategory('all', this)" class="category-chip active-chip px-3.5 py-2 rounded-xl font-bold bg-brand-600 text-white shadow-xs whitespace-nowrap transition">
+    <button type="button" onclick="filterPublicCategory('all', this)" class="category-chip active-chip px-3.5 py-2 rounded-xl font-bold bg-brand-600 text-white shadow-xs whitespace-nowrap tap-scale hover:scale-105 transition-all duration-200">
       ✨ All (બધા)
     </button>
-    <button type="button" onclick="filterPublicCategory('land', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap transition shadow-2xs">
+    <button type="button" onclick="filterPublicCategory('land', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap tap-scale hover:scale-105 transition-all duration-200 shadow-2xs">
       🌾 Land (જમીન / પ્લોટ)
     </button>
-    <button type="button" onclick="filterPublicCategory('farmhouse', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap transition shadow-2xs">
+    <button type="button" onclick="filterPublicCategory('farmhouse', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap tap-scale hover:scale-105 transition-all duration-200 shadow-2xs">
       🏡 Farmhouse (ફાર્મ હાઉસ)
     </button>
-    <button type="button" onclick="filterPublicCategory('commercial', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap transition shadow-2xs">
+    <button type="button" onclick="filterPublicCategory('commercial', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap tap-scale hover:scale-105 transition-all duration-200 shadow-2xs">
       🏢 Commercial (દુકાન / ઓફિસ)
     </button>
-    <button type="button" onclick="filterPublicCategory('residential', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap transition shadow-2xs">
+    <button type="button" onclick="filterPublicCategory('residential', this)" class="category-chip px-3.5 py-2 rounded-xl font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 whitespace-nowrap tap-scale hover:scale-105 transition-all duration-200 shadow-2xs">
       🏠 Villa &amp; Flat
     </button>
   </div>
@@ -292,7 +338,7 @@
 <!-- INTERACTIVE PROPERTY DETAILS & MEDIA MODAL (MOBILE BOTTOM-SHEET / DESKTOP DIALOG) -->
 <!-- ============================================================ -->
 <div id="propertyModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 lg:p-6 transition-all duration-300">
-  <div class="relative bg-white w-full sm:max-w-4xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] sm:max-h-[90vh] flex flex-col animate-in fade-in slide-in-from-bottom-6 duration-200">
+  <div class="modal-sheet-anim relative bg-white w-full sm:max-w-4xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] sm:max-h-[90vh] flex flex-col">
     <!-- Modal Drag Handle Indicator for Mobile Touch -->
     <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0"></div>
 
@@ -587,7 +633,7 @@
 
       list.forEach(prop => {
         const card = document.createElement('article');
-        card.className = "bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group";
+        card.className = "bg-white rounded-3xl border border-slate-200/90 shadow-sm card-hover-lift anim-fade-in overflow-hidden flex flex-col justify-between group";
 
         const primaryImage = (prop.images && prop.images.length > 0) 
           ? prop.images[0] 
@@ -847,180 +893,6 @@
 
     function closePropertyModal() {
       const container = document.getElementById('modalMainMediaContainer');
-      if (container) container.innerHTML = '';
-      document.getElementById('propertyModal').classList.add('hidden');
-    }
-
-    // Close on background click
-    window.addEventListener('click', (e) => {
-      const modal = document.getElementById('propertyModal');
-      if (e.target === modal) closePropertyModal();
-    });
-
-    // Responsive Mobile/Tablet Sidebar Drawer Toggle
-    function toggleSidebar() {
-      const sidebar = document.getElementById("appSidebar");
-      const backdrop = document.getElementById("sidebarBackdrop");
-      if (!sidebar || !backdrop) return;
-      const isHidden = sidebar.classList.contains("-translate-x-full");
-      if (isHidden) {
-        sidebar.classList.remove("-translate-x-full");
-        backdrop.classList.remove("hidden");
-      } else {
-        sidebar.classList.add("-translate-x-full");
-        backdrop.classList.add("hidden");
-      }
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-</script>
-              </button>
-            </div>
-          `;
-
-          grid.appendChild(card);
-        });
-      } catch (err) {
-        console.warn('Could not load live properties:', err);
-      }
-    }
-
-    // Modal Display Logic
-    function openPropertyModal(id) {
-      const prop = publicProperties.find(p => String(p.id) === String(id));
-      if (!prop) return;
-
-      document.getElementById('modalTitle').innerText = prop.title || 'Property Details';
-      const safeMapUrl = getSafeMapUrl(prop);
-      document.getElementById('modalLocation').innerHTML = `
-        <a href="${safeMapUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 hover:underline font-bold text-xs" title="Open Google Maps">
-          <span>📍 ${escapeHtml(prop.location || 'Gujarat, India')}</span>
-          <span class="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">Open Google Maps ↗</span>
-        </a>
-      `;
-      
-      const totalPrice = (prop.total_price || prop.price || 0).toLocaleString('en-IN');
-      document.getElementById('modalPrice').innerText = `₹${totalPrice}`;
-      
-      const rateStr = prop.price_per_vigha 
-        ? `₹${prop.price_per_vigha.toLocaleString('en-IN')} / Vigha`
-        : (prop.price_per_guntha ? `₹${prop.price_per_guntha.toLocaleString('en-IN')} / Guntha` : 'Custom Deal');
-      document.getElementById('modalRate').innerText = rateStr;
-
-      // Land breakdown
-      document.getElementById('modalAreaVigha').innerText = prop.land_area_vigha || '-';
-      document.getElementById('modalAreaGuntha').innerText = prop.land_area_guntha || '-';
-      document.getElementById('modalAreaAcre').innerText = prop.land_area_acre || '-';
-      document.getElementById('modalAreaVaar').innerText = prop.land_area_sq_yard ? prop.land_area_sq_yard.toLocaleString('en-IN') : '-';
-      document.getElementById('modalAreaSqMtr').innerText = prop.land_area_sq_meter ? prop.land_area_sq_meter.toLocaleString('en-IN') : '-';
-      document.getElementById('modalAreaHectare').innerText = prop.land_area_hectare || '-';
-      document.getElementById('modalAreaSqFeet').innerText = prop.land_area_sq_yard ? (Math.round(prop.land_area_sq_yard * 9)).toLocaleString('en-IN') : '-';
-
-      // Specifications
-      document.getElementById('modal712').innerText = prop.names_in_7_12 || 'Not Specified';
-      document.getElementById('modalOldDocs').innerText = prop.old_documents_available || 'Not Specified';
-      document.getElementById('modalRoadType').innerText = prop.road_type || 'Not Specified';
-      document.getElementById('modalFrontWidth').innerText = prop.front_face_width || 'Not Specified';
-      document.getElementById('modalRoadHeight').innerText = prop.road_height_from_land || 'Not Specified';
-      document.getElementById('modalNearestPop').innerText = prop.nearest_population || 'Not Specified';
-      document.getElementById('modalFencing').innerText = prop.fencing || 'Not Specified';
-      document.getElementById('modalLight').innerText = prop.light_electricity || 'Not Specified';
-      document.getElementById('modalMuslimPop').innerText = prop.nearest_muslim_population || 'None';
-
-      // Water facilities
-      const waterContainer = document.getElementById('modalWater');
-      waterContainer.innerHTML = '';
-      if (prop.water_facilities && prop.water_facilities.length > 0) {
-        prop.water_facilities.forEach(fac => {
-          const badge = document.createElement('span');
-          badge.className = 'px-3 py-1 bg-white text-sky-800 border border-sky-300 rounded-lg text-xs font-semibold shadow-xs';
-          badge.innerText = `💧 ${fac}`;
-          waterContainer.appendChild(badge);
-        });
-      } else {
-        waterContainer.innerHTML = `<span class="text-xs text-slate-500">None specified</span>`;
-      }
-
-      // Description
-      document.getElementById('modalDescription').innerText = prop.description || 'No additional notes provided.';
-      document.getElementById('modalDate').innerText = `📅 Listed on: ${formatPublicDate(prop.created_at)}`;
-
-      // Google Maps Navigation button (Always points to working location search or direct link)
-      const mapBtnContainer = document.getElementById('modalMapButtonContainer');
-      mapBtnContainer.innerHTML = `
-        <a href="${safeMapUrl}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
-          <span>📍 Open in Google Maps</span>
-        </a>
-      `;
-
-      // WhatsApp Button with Pre-filled Property Information
-      const whatsappMsg = `Hello M&MESTATE, I am interested in property: "${prop.title}" (Location: ${prop.location}, Price: ₹${totalPrice}). Please share more details.`;
-      document.getElementById('modalWhatsAppBtn').href = `https://wa.me/919999999999?text=${encodeURIComponent(whatsappMsg)}`;
-
-      // Media Gallery Slider & Thumbnails
-      const mainContainer = document.getElementById('modalMainMediaContainer');
-      const thumbsContainer = document.getElementById('modalThumbnails');
-      mainContainer.innerHTML = '';
-      thumbsContainer.innerHTML = '';
-
-      const allMedia = [];
-      if (prop.images) prop.images.forEach(img => allMedia.push({ type: 'image', url: img }));
-      if (prop.videos) prop.videos.forEach(vid => allMedia.push({ type: 'video', url: vid }));
-
-      if (allMedia.length === 0) {
-        mainContainer.innerHTML = `
-          <div class="text-center text-slate-400 text-xs">
-            <p>No photos or videos uploaded</p>
-          </div>
-        `;
-      } else {
-        // Set first item as active
-        showModalMediaItem(allMedia[0]);
-
-        allMedia.forEach((item, index) => {
-          const thumb = document.createElement('div');
-          thumb.className = `w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 cursor-pointer transition ${index === 0 ? 'border-brand-500 ring-2 ring-brand-400/30' : 'border-slate-200 opacity-80 hover:opacity-100'}`;
-          if (item.type === 'image') {
-            thumb.innerHTML = `<img src="${item.url}" class="w-full h-full object-cover"/>`;
-          } else {
-            thumb.innerHTML = `
-              <div class="relative w-full h-full bg-slate-800 flex items-center justify-center text-white text-xs font-bold">
-                <video src="${item.url}" class="w-full h-full object-cover" muted></video>
-                <span class="absolute inset-0 flex items-center justify-center bg-black/40">▶</span>
-              </div>
-            `;
-          }
-          thumb.onclick = () => {
-            Array.from(thumbsContainer.children).forEach(c => {
-              c.classList.remove('border-brand-500', 'ring-2', 'ring-brand-400/30');
-              c.classList.add('border-slate-200', 'opacity-80');
-            });
-            thumb.classList.remove('border-slate-200', 'opacity-80');
-            thumb.classList.add('border-brand-500', 'ring-2', 'ring-brand-400/30');
-            showModalMediaItem(item);
-          };
-          thumbsContainer.appendChild(thumb);
-        });
-      }
-
-      document.getElementById('propertyModal').classList.remove('hidden');
-    }
-
-    function showModalMediaItem(item) {
-      const container = document.getElementById('modalMainMediaContainer');
-      if (item.type === 'image') {
-        container.innerHTML = `<img src="${item.url}" class="w-full h-full object-contain bg-slate-950"/>`;
-      } else {
-        container.innerHTML = `<video src="${item.url}" controls autoplay class="w-full h-full object-contain bg-slate-950"></video>`;
-      }
-    }
-
-    function closePropertyModal() {
-      const container = document.getElementById('modalMainMediaContainer');
-      // Stop any playing video
       if (container) container.innerHTML = '';
       document.getElementById('propertyModal').classList.add('hidden');
     }

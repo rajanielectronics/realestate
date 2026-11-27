@@ -60,11 +60,52 @@
     ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
   </style>
-  <script>
-    // AUTH CHECK: Must be logged in to view panel (supports both session & local storage)
-    if (sessionStorage.getItem("mmestate_admin_authenticated") !== "true" && localStorage.getItem("mmestate_admin_authenticated") !== "true") {
-      window.location.href = "admin.html";
+  <style id="authGateStyles">
+    html, body {
+      display: none !important;
     }
+  </style>
+  <style>
+    /* Smooth Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fade-up {
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hover-lift {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hover-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 24px -6px rgba(0, 0, 0, 0.08);
+    }
+    .tap-bounce:active {
+      transform: scale(0.97);
+    }
+    details[open] summary svg.chevron-arrow {
+      transform: rotate(180deg);
+    }
+  </style>
+  <script>
+    // STRICT AUTH GATE: Redirect immediately to admin.html if not signed in with valid session token
+    (function() {
+      var token = sessionStorage.getItem("mmestate_admin_token");
+      var timestamp = parseInt(sessionStorage.getItem("mmestate_admin_time") || "0", 10);
+      var isValid = token === "MMESTATE_AUTH_1963_OK" && (Date.now() - timestamp < 7200000);
+      if (!isValid) {
+        sessionStorage.clear();
+        localStorage.removeItem("mmestate_admin_authenticated");
+        window.location.replace("admin.html");
+      } else {
+        document.addEventListener("DOMContentLoaded", function() {
+          var el = document.getElementById("authGateStyles");
+          if (el) el.remove();
+        });
+      }
+    })();
+  </script>
 
     // ============================================================
     // STANDALONE SMART CALCULATOR (LOADED IN HEAD SO READY INSTANTLY)
@@ -988,9 +1029,9 @@
     }
 
     function logoutAdmin() {
-      sessionStorage.removeItem("mmestate_admin_authenticated");
-      localStorage.removeItem("mmestate_admin_authenticated");
-      window.location.href = "admin.html";
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.replace("admin.html");
     }
 
     function getSafeMapUrl(prop) {
@@ -1660,7 +1701,7 @@
           // 1. LUXURY RESPONSIVE PROPERTY CARD (Optimized for Mobile, iPad & Desktop)
           if (grid) {
             const card = document.createElement("div");
-            card.className = "bg-white border border-slate-200/90 hover:border-brand-300 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group";
+            card.className = "bg-white border border-slate-200/90 hover:border-brand-400 rounded-3xl overflow-hidden shadow-sm hover-lift anim-fade-up flex flex-col justify-between group";
             card.innerHTML = `
               <div>
                 <!-- Hero Image with Luxury Floating Badges -->
@@ -1812,10 +1853,30 @@
       }
     }
 
+    function animateCount(id, target) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = 0;
+      const duration = 500;
+      const startTime = performance.now();
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * easeOut);
+        el.innerText = current;
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.innerText = target;
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
     function updateStats(properties) {
-      safeSetText("statTotalProperties", properties.length);
-      safeSetText("headerCatalogCount", properties.length);
-      safeSetText("statLandCount", properties.filter(p => (p.property_type || '').toLowerCase().includes('land')).length);
+      const totalProps = properties.length;
+      const landCount = properties.filter(p => (p.property_type || '').toLowerCase().includes('land')).length;
 
       let totalPhotos = 0;
       let totalVideos = 0;
@@ -1824,8 +1885,11 @@
         if (p.videos) totalVideos += p.videos.length;
       });
 
-      safeSetText("statTotalPhotos", totalPhotos);
-      safeSetText("statTotalVideos", totalVideos);
+      safeSetText("headerCatalogCount", totalProps);
+      animateCount("statTotalProperties", totalProps);
+      animateCount("statLandCount", landCount);
+      animateCount("statTotalPhotos", totalPhotos);
+      animateCount("statTotalVideos", totalVideos);
     }
 
     async function deleteProperty(id) {
