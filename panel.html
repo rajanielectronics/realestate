@@ -99,13 +99,12 @@
         localStorage.removeItem("mmestate_admin_authenticated");
         window.location.replace("admin.html");
       } else {
-        document.addEventListener("DOMContentLoaded", function() {
-          var el = document.getElementById("authGateStyles");
-          if (el) el.remove();
-        });
+        var el = document.getElementById("authGateStyles");
+        if (el && el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
       }
     })();
-  </script>
 
     // ============================================================
     // STANDALONE SMART CALCULATOR (LOADED IN HEAD SO READY INSTANTLY)
