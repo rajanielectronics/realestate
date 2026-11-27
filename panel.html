@@ -284,101 +284,103 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen font-sans">
 
   <div class="min-h-screen flex flex-col">
-    <!-- Top Nav Header (Fully Responsive on Mobile/Tablet/Desktop) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-3 sm:px-6 py-3 flex items-center justify-between shadow-xs">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm shadow-brand-500/30 shrink-0">
+    <!-- Top Nav Header (Ultra-Responsive on Mobile, Tablet & Desktop) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-3 sm:px-6 py-2.5 flex items-center justify-between shadow-2xs">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-extrabold text-base shadow-xs shrink-0">
           M
         </div>
         <div>
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="font-bold text-slate-900 tracking-tight text-sm sm:text-base">M&amp;MESTATE</span>
-            <span class="text-[9px] sm:text-[10px] font-semibold bg-brand-50 text-brand-700 px-1.5 py-0.5 rounded-full border border-brand-200">ADMIN</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-slate-900 tracking-tight text-sm sm:text-base">M&amp;MESTATE</span>
+            <span class="text-[9px] font-bold bg-brand-50 text-brand-700 px-1.5 py-0.5 rounded-md border border-brand-200">ADMIN</span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400">Land &amp; Property Manager</p>
+          <p class="text-[9px] sm:text-[10px] text-slate-400 -mt-0.5 hidden xs:block">Land &amp; Property Manager</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <a href="#liveCatalogSection" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-lg transition" title="Go to Live Catalog">
-          <span>📋 Live Catalog (<span id="headerCatalogCount">1</span>)</span>
+      <!-- Action Buttons Compact Group (Fits Any Mobile Screen) -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <a href="#liveCatalogSection" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-xl transition shadow-2xs" title="View Live Catalog">
+          <span>📋</span>
+          <span class="hidden sm:inline">Live </span><span>Catalog</span>
+          <span class="bg-brand-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ml-0.5" id="headerCatalogCount">1</span>
         </a>
-        <a href="#propertyFormSection" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition" title="Add or Edit Property">
-          <span>➕ Add / Edit</span>
+        <a href="#propertyFormSection" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition shadow-2xs" title="Add New Property">
+          <span>➕ Add</span>
         </a>
-        <a href="index.html" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition" title="View Public Website">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="hidden sm:inline">View Site</span>
+        <a href="index.html" target="_blank" class="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition" title="Open Public Website">
+          <span>🌐</span>
+          <span class="hidden sm:inline">Site</span>
         </a>
-        <button onclick="logoutAdmin()" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition" title="Log Out">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="hidden sm:inline">Log Out</span>
+        <button onclick="logoutAdmin()" class="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition" title="Log Out">
+          <span>🚪</span>
+          <span class="hidden sm:inline">Exit</span>
         </button>
       </div>
     </header>
 
     <!-- Main Container (Responsive padding for phone & tablet) -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 space-y-5 sm:space-y-7">
       
       <!-- Stats Overview Row -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Properties</p>
-            <p id="statTotalProperties" class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5 sm:mt-1">0</p>
+            <p id="statTotalProperties" class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">0</p>
           </div>
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
 
-        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Land Listings</p>
-            <p id="statLandCount" class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5 sm:mt-1">0</p>
+            <p id="statLandCount" class="text-xl sm:text-2xl font-black text-emerald-600 mt-0.5">0</p>
           </div>
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
 
-        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Photos</p>
-            <p id="statTotalPhotos" class="text-xl sm:text-2xl font-bold text-indigo-600 mt-0.5 sm:mt-1">0</p>
+            <p id="statTotalPhotos" class="text-xl sm:text-2xl font-black text-indigo-600 mt-0.5">0</p>
           </div>
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
 
-        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Videos</p>
-            <p id="statTotalVideos" class="text-xl sm:text-2xl font-bold text-purple-600 mt-0.5 sm:mt-1">0</p>
+            <p id="statTotalVideos" class="text-xl sm:text-2xl font-black text-purple-600 mt-0.5">0</p>
           </div>
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
       </div>
 
       <!-- ============================================================ -->
-      <!-- SECTION 4: SMART GUJARATI LAND AREA & PRICING CONVERTER -->
-      <!-- (Placed prominently at the top for immediate access & mobile speed) -->
+      <!-- SECTION: SMART GUJARATI LAND AREA & PRICING CONVERTER -->
       <!-- ============================================================ -->
-      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-100 pb-4 mb-4">
+      <section class="bg-white rounded-3xl border border-slate-200 shadow-xs p-4 sm:p-6 md:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3.5 mb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
-              Smart Land Area &amp; Price Calculator (જમીન માપ અને ભાવ કેલ્ક્યુલેટર)
+              Smart Land Area &amp; Price Calculator (જમીન માપ અને ભાવ)
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Type area or price in the boxes below: values convert instantly as you type.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Instant auto-conversion across Vigha, Guntha, Acre, and Sq. Yards.</p>
           </div>
           <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-            <button type="button" onclick="resetCalculator()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-xs" title="Reset Calculator">
-              <span>↺ Reset Calculator</span>
+            <button type="button" onclick="resetCalculator()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-2xs" title="Reset Calculator">
+              <span>↺ Reset</span>
             </button>
             <span class="text-[11px] font-semibold text-brand-700 bg-brand-50 px-2.5 py-1.5 rounded-xl border border-brand-200">
               ૧ વિઘા = ૨૩.૫૦ ગુંઠા | ૧ એકર = ૪૦ ગુંઠા
@@ -386,30 +388,41 @@
           </div>
         </div>
 
-        <!-- Gujarati Reference Bar (Clean responsive grid) -->
-        <div class="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
-          <div>• ૧ વિઘા = <strong>૨૩.૫૦ ગુંઠા</strong></div>
-          <div>• ૧ વિઘા = <strong>૨૮૪૪ ચો. વાર</strong></div>
-          <div>• ૧ વિઘા = <strong>૨૩૭૮ ચો. મી.</strong></div>
-          <div>• ૧ ગુંઠા = <strong>૧૨૧ ચો. વાર</strong> (૧૦૮૯ ચો. ફૂટ)</div>
-          <div>• ૧ એકર = <strong>૪૦ ગુંઠા</strong></div>
-          <div>• ૧ એકર = <strong>૧.૭૦૨ વિઘા</strong></div>
-          <div>• ૧ એકર = <strong>૪૮૪૦ ચો. વાર</strong></div>
-          <div>• ૧ હેકટર = <strong>૨.૪૭ એકર (૪.૨૧ વિઘા)</strong></div>
-        </div>
+        <!-- Gujarati Reference Accordion (Collapsible to Save Huge Mobile Space) -->
+        <details class="group mb-4 bg-amber-50/90 border border-amber-200 rounded-2xl overflow-hidden transition-all">
+          <summary class="px-4 py-2.5 flex items-center justify-between cursor-pointer font-bold text-xs text-amber-900 select-none">
+            <span class="flex items-center gap-1.5">
+              <span>💡</span>
+              <span>Gujarat Land Conversion Guide (વિઘા, ગુંઠા, વાર માપ ગાઇડ)</span>
+            </span>
+            <span class="text-[10px] font-semibold bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full">
+              Tap to View
+            </span>
+          </summary>
+          <div class="p-3.5 pt-1 border-t border-amber-200/60 text-xs text-amber-950 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ વિઘા = <strong>૨૩.૫૦ ગુંઠા</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ વિઘા = <strong>૨૮૪૪ ચો. વાર</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ વિઘા = <strong>૨૩૭૮ ચો. મી.</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ ગુંઠા = <strong>૧૨૧ ચો. વાર</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ એકર = <strong>૪૦ ગુંઠા</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ એકર = <strong>૧.૭૦૨ વિઘા</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ એકર = <strong>૪૮૪૦ ચો. વાર</strong></div>
+            <div class="p-1.5 bg-white/70 rounded-lg">• ૧ હેકટર = <strong>૨.૪૭ એકર</strong></div>
+          </div>
+        </details>
 
-        <!-- Two Core Interactive Inputs (Mobile & Tablet Friendly) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-purple-50/60 p-4 sm:p-5 rounded-2xl border border-purple-200 mb-5">
+        <!-- Two Core Inputs (Touch Target Optimized) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 bg-purple-50/50 p-3.5 sm:p-5 rounded-2xl border border-purple-200 mb-4">
           <!-- Area Input Box -->
           <div>
-            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-              Enter Land Area (જમીનનું માપ દાખલ કરો)
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+              Enter Land Area (જમીનનું માપ)
             </label>
-            <div class="flex flex-col sm:flex-row gap-2.5">
+            <div class="flex flex-col sm:flex-row gap-2">
               <input id="inputAreaValue" type="text" inputmode="decimal" placeholder="e.g. 52" value="52"
                      oninput="calculateLand()" onkeyup="calculateLand()" onchange="calculateLand()" onpaste="calculateLand()"
-                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-xs transition"/>
-              <select id="inputAreaUnit" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-xs transition">
+                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-2xs transition"/>
+              <select id="inputAreaUnit" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-2xs transition">
                 <option value="guntha" selected>Guntha (ગુંઠા)</option>
                 <option value="vigha">Vigha (વિઘા)</option>
                 <option value="acre">Acre (એકર)</option>
@@ -423,14 +436,14 @@
 
           <!-- Price Input Box -->
           <div>
-            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
               Enter Price Rate (ભાવ / કિંમત)
             </label>
-            <div class="flex flex-col sm:flex-row gap-2.5">
+            <div class="flex flex-col sm:flex-row gap-2">
               <input id="inputPriceValue" type="text" inputmode="decimal" placeholder="e.g. 15000000" value="15000000"
                      oninput="calculateLand()" onkeyup="calculateLand()" onchange="calculateLand()" onpaste="calculateLand()"
-                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-xs transition"/>
-              <select id="inputPriceType" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-xs transition">
+                     class="w-full sm:w-3/5 px-4 py-3 sm:py-2.5 text-base sm:text-sm bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 font-bold text-slate-900 outline-none shadow-2xs transition"/>
+              <select id="inputPriceType" onchange="calculateLand()" class="w-full sm:w-2/5 px-3 py-3 sm:py-2.5 text-sm sm:text-xs font-semibold bg-white border-2 border-slate-300 rounded-xl focus:border-brand-600 focus:ring-0 outline-none shadow-2xs transition">
                 <option value="per_vigha" selected>Per Vigha (વિઘા દીઠ)</option>
                 <option value="per_guntha">Per Guntha (ગુંઠા દીઠ)</option>
                 <option value="per_acre">Per Acre (એકર દીઠ)</option>
@@ -442,82 +455,82 @@
         </div>
 
         <!-- LIVE AUTO-CALCULATED RESULTS BREAKDOWN -->
-        <div class="bg-white border-2 border-brand-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+        <div class="bg-white border-2 border-brand-200/90 rounded-2xl p-3.5 sm:p-5 shadow-2xs space-y-3.5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
             <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">
-              Calculated Breakdown Across All Units (આપોઆપ ગણતરી):
+              Calculated Breakdown (આપોઆપ ગણતરી):
             </span>
             <div class="text-left sm:text-right">
-              <span id="displayTotalPrice" class="text-base sm:text-xl font-extrabold text-brand-600 block">Total: ₹3,31,91,489</span>
+              <span id="displayTotalPrice" class="text-lg sm:text-xl font-black text-brand-600 block">Total: ₹3,31,91,489</span>
               <span id="displayTotalPriceWords" class="text-xs font-semibold text-slate-500 block">(3.32 Crore)</span>
             </div>
           </div>
 
-          <!-- Unit Conversion Cards (Responsive 2 cols on mobile, 4 on tablet, 7 on desktop) -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3 text-center">
-            <div class="p-3 bg-purple-50/90 border border-purple-200 rounded-xl">
+          <!-- Unit Conversion Cards (Clean 2-Col on Mobile) -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-2.5 text-center">
+            <div class="p-2.5 sm:p-3 bg-purple-50/90 border border-purple-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-purple-700">Vigha (વિઘા)</p>
               <p id="calcVigha" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">2.213</p>
             </div>
 
-            <div class="p-3 bg-brand-50 border border-brand-300 rounded-xl ring-2 ring-brand-400/20">
+            <div class="p-2.5 sm:p-3 bg-brand-50 border border-brand-300 rounded-xl ring-2 ring-brand-400/20">
               <p class="text-[10px] uppercase font-bold text-brand-700">Guntha (ગુંઠા)</p>
               <p id="calcGuntha" class="text-base sm:text-lg font-black text-brand-700 mt-0.5">52</p>
             </div>
 
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Acre (એકર)</p>
               <p id="calcAcre" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">1.3</p>
             </div>
 
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Yard (વાર)</p>
               <p id="calcVaar" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">6,292</p>
             </div>
 
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Mtr (ચો.મી.)</p>
               <p id="calcSqMtr" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">5,261.96</p>
             </div>
 
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[10px] uppercase font-bold text-slate-500">Hectare (હેકટર)</p>
               <p id="calcHectare" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">0.526</p>
             </div>
 
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl col-span-2 sm:col-span-1">
+            <div class="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl col-span-2 sm:col-span-1">
               <p class="text-[10px] uppercase font-bold text-slate-500">Sq. Feet (ફૂટ)</p>
               <p id="calcSqFeet" class="text-base sm:text-lg font-black text-slate-900 mt-0.5">56,628</p>
             </div>
           </div>
 
           <!-- Price Rates Breakdown Grid -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 pt-2 text-xs">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 pt-1 text-xs">
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
-              <span class="text-slate-500 text-[11px]">Rate / Vigha (વિઘા ભાવ)</span>
-              <span id="ratePerVigha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹1,50,00,000</span>
+              <span class="text-slate-500 text-[10px] uppercase font-semibold">Rate / Vigha</span>
+              <span id="ratePerVigha" class="font-black text-slate-900 text-sm mt-0.5">₹1,50,00,000</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
-              <span class="text-slate-500 text-[11px]">Rate / Guntha (ગુંઠા ભાવ)</span>
-              <span id="ratePerGuntha" class="font-extrabold text-slate-900 text-sm mt-0.5">₹6,38,298</span>
+              <span class="text-slate-500 text-[10px] uppercase font-semibold">Rate / Guntha</span>
+              <span id="ratePerGuntha" class="font-black text-slate-900 text-sm mt-0.5">₹6,38,298</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
-              <span class="text-slate-500 text-[11px]">Rate / Acre (એકર ભાવ)</span>
-              <span id="ratePerAcre" class="font-extrabold text-slate-900 text-sm mt-0.5">₹2,55,31,915</span>
+              <span class="text-slate-500 text-[10px] uppercase font-semibold">Rate / Acre</span>
+              <span id="ratePerAcre" class="font-black text-slate-900 text-sm mt-0.5">₹2,55,31,915</span>
             </div>
             <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
-              <span class="text-slate-500 text-[11px]">Rate / Vaar (વાર ભાવ)</span>
-              <span id="ratePerVaar" class="font-extrabold text-slate-900 text-sm mt-0.5">₹5,275</span>
+              <span class="text-slate-500 text-[10px] uppercase font-semibold">Rate / Vaar</span>
+              <span id="ratePerVaar" class="font-black text-slate-900 text-sm mt-0.5">₹5,275</span>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ============================================================ -->
-      <!-- PROPERTY CATALOG CREATION & EDITING FORM -->
+      <!-- PROPERTY CATALOG CREATION & EDITING FORM (STRUCTURED INTO 4 CLEAN SECTIONS) -->
       <!-- ============================================================ -->
-      <section id="propertyFormSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+      <section id="propertyFormSection" class="bg-white rounded-3xl border border-slate-200 shadow-xs p-4 sm:p-6 md:p-8">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-5">
           <div>
             <h2 id="formHeading" class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -525,13 +538,13 @@
             </h2>
             <p id="formSubheading" class="text-xs text-slate-500 mt-0.5">No compulsory fields. Publish whatever details you have ready.</p>
           </div>
-          <button type="button" onclick="resetForm()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-xs" title="Reset Property Form">
-            <span>↺ Reset Form</span>
+          <button type="button" onclick="resetForm()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-2xs" title="Reset Property Form">
+            <span>↺ Reset</span>
           </button>
         </div>
 
         <!-- ACTIVE EDIT MODE BANNER (Appears when editing an existing listing) -->
-        <div id="editModeBanner" class="hidden mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div id="editModeBanner" class="hidden mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
               ✏️
@@ -551,275 +564,320 @@
 
         <form id="propertyForm" onsubmit="handlePropertySubmit(event)" class="space-y-6">
           
-          <!-- Basic Info -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Title</label>
-              <input id="propTitle" type="text" placeholder="e.g. 52 Guntha Land Near Highway" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
+          <!-- SECTION 1: BASIC INFORMATION -->
+          <div class="p-4 sm:p-5 bg-slate-50/70 border border-slate-200/90 rounded-2xl space-y-4">
+            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+              <span class="w-6 h-6 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs">1</span>
+              <span>Basic Information (સામાન્ય વિગતો)</span>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Type</label>
-              <select id="propType" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium">
-                <option value="Land (જમીન / પ્લોટ)">Land (જમીન / પ્લોટ)</option>
-                <option value="Agricultural Land (ખેતીની જમીન)">Agricultural Land (ખેતીની જમીન)</option>
-                <option value="Commercial Land (કોમર્શિયલ જમીન)">Commercial Land (કોમર્શિયલ જમીન)</option>
-                <option value="Industrial Land (ઔદ્યોગિક જમીન)">Industrial Land (ઔદ્યોગિક જમીન)</option>
-                <option value="Farmhouse Land (ફાર્મ હાઉસ)">Farmhouse Land (ફાર્મ હાઉસ)</option>
-                <option value="Apartment (ફ્લેટ)">Apartment (ફ્લેટ)</option>
-                <option value="Villa (વિલા)">Villa (વિલા)</option>
-                <option value="Hotel (હોટેલ)">Hotel (હોટેલ)</option>
-                <option value="Commercial (દુકાન / ઓફિસ)">Commercial (દુકાન / ઓફિસ)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Location / Village / City</label>
-              <input id="propLocation" type="text" placeholder="e.g. Anand, Gujarat, India" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
-            </div>
-          </div>
-
-          <!-- Google Maps Link -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
-              <span>Google Maps Location Link (ગૂગલ મેપ લિંક)</span>
-              <span class="text-[11px] text-slate-400 font-normal">Share link from Google Maps</span>
-            </label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <div class="relative flex-1">
-                <input id="propMapLink" type="url" placeholder="https://maps.app.goo.gl/... or https://goo.gl/maps/..." class="w-full pl-9 pr-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"/>
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-600">
-                  📍
-                </div>
-              </div>
-              <button type="button" id="testMapBtn" onclick="openTestMap()" class="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center gap-1.5 shrink-0">
-                <span>Open in Map</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Title & 7/12 Section -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Names in 7/12 (૭/૧૨ માં નામની સંખ્યા)
-              </label>
-              <select id="propNames712" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium">
-                <option value="Not Known / Unspecified">Not Known / Unspecified (માહિતી નથી / નક્કી નથી)</option>
-                <option value="1 Name">1 Name (૧ નામ)</option>
-                <option value="2 Names">2 Names (૨ નામ)</option>
-                <option value="3 Names">3 Names (૩ નામ)</option>
-                <option value="4 Names">4 Names (૪ નામ)</option>
-                <option value="5 Names">5 Names (૫ નામ)</option>
-                <option value="6 Names">6 Names (૬ નામ)</option>
-                <option value="7 Names">7 Names (૭ નામ)</option>
-                <option value="8 Names">8 Names (૮ નામ)</option>
-                <option value="9 Names">9 Names (૯ નામ)</option>
-                <option value="10 Names">10 Names (૧૦ નામ)</option>
-                <option value="More than 10 Names">More than 10 Names (૧૦ થી વધુ નામ)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Old Documents Available (જૂના દસ્તાવેજ / પેઢીનામું)
-              </label>
-              <select id="propOldDocs" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium">
-                <option value="Yes">Yes (હા - જૂના દસ્તાવેજ ઉપલબ્ધ છે)</option>
-                <option value="No">No (ના - જૂના દસ્તાવેજ ઉપલબ્ધ નથી)</option>
-                <option value="In Process">In Process (પ્રક્રિયા ચાલુ છે)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Location Parameters Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-slate-100">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Road Type (રસ્તો)</label>
-              <select id="propRoadType" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Damar (ડામર રોડ)">Damar (ડામર રોડ)</option>
-                <option value="Cemented (સીસી / સિમેન્ટ)">Cemented (સીસી / સિમેન્ટ)</option>
-                <option value="Rough (કાચો રસ્તો)">Rough (કાચો રસ્તો)</option>
-                <option value="Highway (હાઈવે ટચ)">Highway (હાઈવે ટચ)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Front Width (મોઢું)</label>
-              <select id="propFrontWidth" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Wide (મોટો / પહોળો)">Wide (મોટો / પહોળો)</option>
-                <option value="Narrow (સાંકડો)">Narrow (સાંકડો)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nearest Population (વસ્તી)</label>
-              <select id="propNearestPop" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="< 1 km">&lt; 1 km (૧ કિ.મી. થી ઓછું)</option>
-                <option value="1 km">1 km</option>
-                <option value="2 km">2 km</option>
-                <option value="3 km">3 km</option>
-                <option value="4 km">4 km</option>
-                <option value="5 km">5 km</option>
-                <option value="6 km">6 km</option>
-                <option value="7 km">7 km</option>
-                <option value="8 km">8 km</option>
-                <option value="9 km">9 km</option>
-                <option value="10 km">10 km</option>
-                <option value="15 km">15 km</option>
-                <option value="15+ km">15+ km</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Road Height (રોડ લેવલ)</label>
-              <select id="propRoadHeight" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Above Land (રોડ ઊંચો છે)">Above Land (રોડ ઊંચો છે)</option>
-                <option value="Below Land (રોડ નીચો છે)">Below Land (રોડ નીચો છે)</option>
-                <option value="Same Level (સરખા લેવલમાં)">Same Level (સરખા લેવલમાં)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Fencing (તાર ફેન્સિંગ)</label>
-              <select id="propFencing" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Yes (હા)">Yes (હા - ફેન્સિંગ છે)</option>
-                <option value="No (ના)">No (ના - ફેન્સિંગ નથી)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Light / Electricity (વીજળી)</label>
-              <select id="propLight" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Yes (હા)">Yes (હા - વીજળી છે)</option>
-                <option value="No (ના)">No (ના - વીજળી નથી)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nearest Muslim Population</label>
-              <select id="propMuslimPop" class="w-full px-3 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="None (નથી)">None (નથી)</option>
-                <option value="1 km">1 km</option>
-                <option value="2 km">2 km</option>
-                <option value="3 km">3 km</option>
-                <option value="4 km">4 km</option>
-                <option value="5 km">5 km</option>
-                <option value="10 km">10 km</option>
-                <option value="10+ km">10+ km</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Water Facilities (Multi-Select) -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-              Water Facilities (પાણીની સગવડ - Select Any That Apply)
-            </label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="Borewell (બોર)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">Borewell (બોર)</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="Well (કૂવો)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">Well (કૂવો)</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="River (નદી)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">River (નદી)</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="Canal (કેનાલ)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">Canal (કેનાલ)</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="Pipeline (પાઈપલાઈન)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">Pipeline</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition">
-                <input type="checkbox" name="waterFacility" value="None (કોઈ નહીં)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
-                <span class="text-xs font-medium text-slate-800">None</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Description -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Description / Notes</label>
-            <textarea id="propDescription" rows="3" placeholder="Write additional details: crop history, soil, boundary, seller notes..." class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
-          </div>
-
-          <!-- Photos & Videos Uploader -->
-          <div class="space-y-3 pt-2 border-t border-slate-100">
-            <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               <div>
-                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  Upload Photos &amp; Videos (Supabase Cloud Storage)
-                </label>
-                <p class="text-[11px] text-slate-400 mt-0.5">Upload from Phone Gallery, Google Photos, Mobile Camera, Laptop, or Drag &amp; Drop</p>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Title</label>
+                <input id="propTitle" type="text" placeholder="e.g. 52 Guntha Land Near Highway" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs"/>
               </div>
-              <span id="mediaCountBadge" class="text-[11px] font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-200">
-                0 Files Added
-              </span>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Type</label>
+                <select id="propType" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium shadow-2xs">
+                  <option value="Land (જમીન / પ્લોટ)">Land (જમીન / પ્લોટ)</option>
+                  <option value="Agricultural Land (ખેતીની જમીન)">Agricultural Land (ખેતીની જમીન)</option>
+                  <option value="Commercial Land (કોમર્શિયલ જમીન)">Commercial Land (કોમર્શિયલ જમીન)</option>
+                  <option value="Industrial Land (ઔદ્યોગિક જમીન)">Industrial Land (ઔદ્યોગિક જમીન)</option>
+                  <option value="Farmhouse Land (ફાર્મ હાઉસ)">Farmhouse Land (ફાર્મ હાઉસ)</option>
+                  <option value="Apartment (ફ્લેટ)">Apartment (ફ્લેટ)</option>
+                  <option value="Villa (વિલા)">Villa (વિલા)</option>
+                  <option value="Hotel (હોટેલ)">Hotel (હોટેલ)</option>
+                  <option value="Commercial (દુકાન / ઓફિસ)">Commercial (દુકાન / ઓફિસ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Location / Village / City</label>
+                <input id="propLocation" type="text" placeholder="e.g. Anand, Gujarat, India" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs"/>
+              </div>
             </div>
 
-            <!-- Offscreen File Input (Using sr-only instead of hidden so mobile/desktop browsers NEVER block it) -->
-            <input id="fileInput" 
-                   type="file" 
-                   multiple 
-                   accept="image/*,video/*" 
-                   class="sr-only" 
-                   style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"
-                   onchange="handleFileSelect(event)" />
-
-            <!-- Drop Zone / Browse Box: Clicking ANYWHERE reliably opens camera / gallery / files -->
-            <div id="dropZone" 
-                 onclick="triggerFilePicker(event)"
-                 ondragover="handleDragOver(event)" 
-                 ondragleave="handleDragLeave(event)" 
-                 ondrop="handleDrop(event)"
-                 class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 sm:p-8 text-center bg-slate-50/70 hover:bg-brand-50/30 transition-all cursor-pointer group select-none">
-              
-              <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-110 transition duration-200 shadow-sm">
-                  <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <!-- Google Maps Link -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+                <span>Google Maps Location Link (ગૂગલ મેપ લિંક)</span>
+                <span class="text-[11px] text-slate-400 font-normal">Optional</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-1">
+                  <input id="propMapLink" type="url" placeholder="https://maps.app.goo.gl/... or paste location" class="w-full pl-9 pr-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs"/>
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-600">
+                    📍
+                  </div>
                 </div>
-                <p class="text-sm font-bold text-slate-800">
-                  <span class="text-brand-600 underline">Tap to browse Photos &amp; Videos</span> or Drag files here
-                </p>
-                <p class="text-xs text-slate-400">Supports Mobile Gallery, Camera, Google Photos, Desktop files (JPG, PNG, WEBP, MP4, MOV)</p>
+                <button type="button" id="testMapBtn" onclick="openTestMap()" class="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 shadow-2xs">
+                  <span>Open in Map</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: LAND RECORDS & 7/12 -->
+          <div class="p-4 sm:p-5 bg-slate-50/70 border border-slate-200/90 rounded-2xl space-y-4">
+            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+              <span class="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs">2</span>
+              <span>Land Records &amp; Legal (૭/૧૨ અને કાયદાકીય વિગતો)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Names in 7/12 (૭/૧૨ માં નામની સંખ્યા)
+                </label>
+                <select id="propNames712" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium shadow-2xs">
+                  <option value="Not Known / Unspecified">Not Known / Unspecified (માહિતી નથી / નક્કી નથી)</option>
+                  <option value="1 Name">1 Name (૧ નામ)</option>
+                  <option value="2 Names">2 Names (૨ નામ)</option>
+                  <option value="3 Names">3 Names (૩ નામ)</option>
+                  <option value="4 Names">4 Names (૪ નામ)</option>
+                  <option value="5 Names">5 Names (૫ નામ)</option>
+                  <option value="6 Names">6 Names (૬ નામ)</option>
+                  <option value="7 Names">7 Names (૭ નામ)</option>
+                  <option value="8 Names">8 Names (૮ નામ)</option>
+                  <option value="9 Names">9 Names (૯ નામ)</option>
+                  <option value="10 Names">10 Names (૧૦ નામ)</option>
+                  <option value="More than 10 Names">More than 10 Names (૧૦ થી વધુ નામ)</option>
+                </select>
               </div>
 
-              <div class="mt-4 flex justify-center pointer-events-none">
-                <span class="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 group-hover:bg-brand-700 text-white rounded-xl text-sm font-bold shadow-md shadow-brand-500/20 transition">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span>📁 Select from Gallery / Files</span>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Old Documents Available (જૂના દસ્તાવેજ / પેઢીનામું)
+                </label>
+                <select id="propOldDocs" class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium shadow-2xs">
+                  <option value="Yes">Yes (હા - જૂના દસ્તાવેજ ઉપલબ્ધ છે)</option>
+                  <option value="No">No (ના - જૂના દસ્તાવેજ ઉપલબ્ધ નથી)</option>
+                  <option value="In Process">In Process (પ્રક્રિયા ચાલુ છે)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: ROAD, BOUNDARY & INFRASTRUCTURE -->
+          <div class="p-4 sm:p-5 bg-slate-50/70 border border-slate-200/90 rounded-2xl space-y-4">
+            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+              <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs">3</span>
+              <span>Road, Boundary &amp; Facilities (રસ્તો, વીજળી અને સુવિધાઓ)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Road Type (રસ્તો)</label>
+                <select id="propRoadType" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="Damar (ડામર રોડ)">Damar (ડામર રોડ)</option>
+                  <option value="Cemented (સીસી / સિમેન્ટ)">Cemented (સીસી / સિમેન્ટ)</option>
+                  <option value="Rough (કાચો રસ્તો)">Rough (કાચો રસ્તો)</option>
+                  <option value="Highway (હાઈવે ટચ)">Highway (હાઈવે ટચ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Front Width (મોઢું)</label>
+                <select id="propFrontWidth" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="Wide (મોટો / પહોળો)">Wide (મોટો / પહોળો)</option>
+                  <option value="Narrow (સાંકડો)">Narrow (સાંકડો)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nearest Population (વસ્તી)</label>
+                <select id="propNearestPop" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="< 1 km">&lt; 1 km (૧ કિ.મી. થી ઓછું)</option>
+                  <option value="1 km">1 km</option>
+                  <option value="2 km">2 km</option>
+                  <option value="3 km">3 km</option>
+                  <option value="4 km">4 km</option>
+                  <option value="5 km">5 km</option>
+                  <option value="6 km">6 km</option>
+                  <option value="7 km">7 km</option>
+                  <option value="8 km">8 km</option>
+                  <option value="9 km">9 km</option>
+                  <option value="10 km">10 km</option>
+                  <option value="15 km">15 km</option>
+                  <option value="15+ km">15+ km</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Road Height (રોડ લેવલ)</label>
+                <select id="propRoadHeight" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="Above Land (રોડ ઊંચો છે)">Above Land (રોડ ઊંચો છે)</option>
+                  <option value="Below Land (રોડ નીચો છે)">Below Land (રોડ નીચો છે)</option>
+                  <option value="Same Level (સરખા લેવલમાં)">Same Level (સરખા લેવલમાં)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Fencing (તાર ફેન્સિંગ)</label>
+                <select id="propFencing" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="Yes (હા)">Yes (હા - ફેન્સિંગ છે)</option>
+                  <option value="No (ના)">No (ના - ફેન્સિંગ નથી)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Light / Electricity (વીજળી)</label>
+                <select id="propLight" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="Yes (હા)">Yes (હા - વીજળી છે)</option>
+                  <option value="No (ના)">No (ના - વીજળી નથી)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nearest Muslim Population</label>
+                <select id="propMuslimPop" class="w-full px-3 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs">
+                  <option value="None (નથી)">None (નથી)</option>
+                  <option value="1 km">1 km</option>
+                  <option value="2 km">2 km</option>
+                  <option value="3 km">3 km</option>
+                  <option value="4 km">4 km</option>
+                  <option value="5 km">5 km</option>
+                  <option value="10 km">10 km</option>
+                  <option value="10+ km">10+ km</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Water Facilities (Multi-Select) -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                Water Facilities (પાણીની સગવડ - Select Any That Apply)
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="Borewell (બોર)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">Borewell (બોર)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="Well (કૂવો)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">Well (કૂવો)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="River (નદી)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">River (નદી)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="Canal (કેનાલ)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">Canal (કેનાલ)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="Pipeline (પાઈપલાઈન)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">Pipeline</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50/50 transition shadow-2xs">
+                  <input type="checkbox" name="waterFacility" value="None (કોઈ નહીં)" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"/>
+                  <span class="text-xs font-medium text-slate-800">None</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: PHOTOS, VIDEOS & DESCRIPTION -->
+          <div class="p-4 sm:p-5 bg-slate-50/70 border border-slate-200/90 rounded-2xl space-y-4">
+            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+              <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">4</span>
+              <span>Photos, Videos &amp; Notes (ફોટા, વિડિયો અને વર્ણન)</span>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Property Description / Notes</label>
+              <textarea id="propDescription" rows="3" placeholder="Write additional details: crop history, soil, boundary, seller notes..." class="w-full px-3.5 py-2.5 text-base sm:text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none shadow-2xs"></textarea>
+            </div>
+
+            <!-- Photos & Videos Uploader -->
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    Upload Photos &amp; Videos (Supabase Cloud Storage)
+                  </label>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Upload from Mobile Gallery, Camera, Google Photos, or Laptop</p>
+                </div>
+                <span id="mediaCountBadge" class="text-[11px] font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-200">
+                  0 Files Added
                 </span>
               </div>
-            </div>
 
-            <!-- Upload Progress Bar -->
-            <div id="uploadProgressContainer" class="hidden p-3 bg-brand-50 border border-brand-200 rounded-xl">
-              <div class="flex items-center justify-between text-xs text-brand-800 mb-1 font-medium">
-                <span id="uploadStatusText">Uploading to Supabase Storage...</span>
-                <span id="uploadPercentText" class="font-bold">0%</span>
+              <!-- Native Hidden File Inputs (Both Camera and Gallery for Mobile & Desktop) -->
+              <input id="fileInput" 
+                     type="file" 
+                     multiple 
+                     accept="image/*,video/*" 
+                     class="hidden" 
+                     onchange="handleFileSelect(event)" />
+              <input id="cameraInput" 
+                     type="file" 
+                     accept="image/*" 
+                     capture="environment" 
+                     class="hidden" 
+                     onchange="handleFileSelect(event)" />
+
+              <!-- Drop Zone / Mobile-First Tap Target -->
+              <div id="dropZone" 
+                   ondragover="handleDragOver(event)" 
+                   ondragleave="handleDragLeave(event)" 
+                   ondrop="handleDrop(event)"
+                   class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-5 sm:p-7 text-center bg-white hover:bg-brand-50/20 transition-all shadow-2xs">
+                
+                <div class="flex flex-col items-center justify-center gap-1.5 mb-4 pointer-events-none">
+                  <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shadow-xs">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-slate-800">
+                    Upload Property Photos &amp; Videos
+                  </p>
+                  <p class="text-xs text-slate-400">Supports JPG, PNG, WEBP, MP4, MOV from Gallery, Camera or Laptop</p>
+                </div>
+
+                <!-- Touch Buttons Grid (Optimized for Mobile Phones: 48px min height) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-md mx-auto">
+                  <label for="cameraInput" class="h-12 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition">
+                    <span>📷</span>
+                    <span>Take Live Photo (Camera)</span>
+                  </label>
+                  <label for="fileInput" class="h-12 px-4 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition">
+                    <span>🖼️</span>
+                    <span>Choose from Gallery / Files</span>
+                  </label>
+                </div>
+
+                <!-- URL Adder Option -->
+                <div class="mt-3 text-center">
+                  <button type="button" onclick="addMediaUrlPrompt()" class="text-xs font-semibold text-brand-600 hover:text-brand-800 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                    <span>🔗 Or Paste Photo / Video Web Link</span>
+                  </button>
+                </div>
               </div>
-              <div class="w-full bg-brand-200 rounded-full h-2 overflow-hidden">
-                <div id="uploadProgressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-150" style="width: 0%"></div>
+
+              <!-- Upload Progress Bar -->
+              <div id="uploadProgressContainer" class="hidden p-3 bg-brand-50 border border-brand-200 rounded-xl">
+                <div class="flex items-center justify-between text-xs text-brand-800 mb-1 font-medium">
+                  <span id="uploadStatusText">Uploading to Supabase Storage...</span>
+                  <span id="uploadPercentText" class="font-bold">0%</span>
+                </div>
+                <div class="w-full bg-brand-200 rounded-full h-2 overflow-hidden">
+                  <div id="uploadProgressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-150" style="width: 0%"></div>
+                </div>
               </div>
-            </div>
 
-            <!-- Previews Header with Instruction -->
-            <div id="previewHeader" class="hidden flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-              <span class="font-semibold text-slate-700">Media Previews:</span>
-              <span class="text-rose-600 text-[11px] font-semibold">Tap red ✕ on any photo/video to delete before saving</span>
-            </div>
+              <!-- Previews Header with Instruction -->
+              <div id="previewHeader" class="hidden flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                <span class="font-semibold text-slate-700">Media Previews:</span>
+                <span class="text-rose-600 text-[11px] font-semibold">Tap red ✕ on any photo to delete</span>
+              </div>
 
-            <!-- Preview Gallery Grid (Small Thumbnails with Clear Red Delete Button) -->
-            <div id="previewGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+              <!-- Preview Gallery Grid (Small Thumbnails with Clear Red Delete Button) -->
+              <div id="previewGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+            </div>
           </div>
 
           <!-- Submit & Cancel Buttons -->
@@ -827,7 +885,7 @@
             <button id="cancelEditBtn" type="button" onclick="cancelEdit()" class="hidden px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
               Cancel Edit
             </button>
-            <button id="submitBtn" type="submit" class="w-full sm:w-auto px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2">
+            <button id="submitBtn" type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2 active:scale-98">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span id="submitBtnText">Publish Catalog Entry</span>
             </button>
@@ -1001,10 +1059,6 @@
     }
 
     function triggerFilePicker(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
       const fi = document.getElementById("fileInput");
       if (fi) {
         fi.click();
@@ -1016,16 +1070,30 @@
     }
 
     function handleFileSelect(e) {
-      const fi = document.getElementById("fileInput");
-      const files = (e && e.target && e.target.files && e.target.files.length > 0)
-        ? Array.from(e.target.files)
-        : (fi && fi.files && fi.files.length > 0 ? Array.from(fi.files) : []);
+      const target = e ? (e.target || e.currentTarget) : null;
+      const files = (target && target.files && target.files.length > 0)
+        ? Array.from(target.files)
+        : [];
 
       if (files.length === 0) return;
       addFiles(files);
-      if (fi) {
-        fi.value = ""; // Clear file input value so selecting same file or subsequent picks trigger onchange reliably
+      if (target) {
+        try { target.value = ""; } catch(err) {}
       }
+    }
+
+    function addMediaUrlPrompt() {
+      const url = prompt("Enter or paste Image or Video URL:");
+      if (!url || !url.trim()) return;
+      const cleanUrl = url.trim();
+      const isVideo = /\.(mp4|mov|avi|webm|mkv|3gp|m4v)$/i.test(cleanUrl) || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+      if (isVideo) {
+        existingVideos.push(cleanUrl);
+      } else {
+        existingImages.push(cleanUrl);
+      }
+      renderMediaPreviews();
+      showToast("Media added to listing!", "success");
     }
 
     function addFiles(files) {
@@ -1589,63 +1657,81 @@
             ? prop.water_facilities.join(', ') 
             : (typeof prop.water_facilities === 'string' ? prop.water_facilities : 'None');
 
-          // 1. RESPONSIVE PROPERTY CARD (Visible on Phones, iPads, Tablets, Laptops & Desktops)
+          // 1. LUXURY RESPONSIVE PROPERTY CARD (Optimized for Mobile, iPad & Desktop)
           if (grid) {
             const card = document.createElement("div");
-            card.className = "bg-white border border-slate-200 hover:border-brand-300 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between";
+            card.className = "bg-white border border-slate-200/90 hover:border-brand-300 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group";
             card.innerHTML = `
               <div>
-                <div class="relative h-48 w-full overflow-hidden bg-slate-900">
-                  <img src="${primaryImage}" alt="${escapeHtml(prop.title)}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80'"/>
-                  <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-                    <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-brand-600 text-white shadow-xs">
+                <!-- Hero Image with Luxury Floating Badges -->
+                <div class="relative h-56 sm:h-60 w-full overflow-hidden bg-slate-950">
+                  <img src="${primaryImage}" alt="${escapeHtml(prop.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80'"/>
+                  
+                  <!-- Top Left: Type & Video Badges -->
+                  <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-600/95 text-white shadow-md backdrop-blur-xs">
                       ${escapeHtml(prop.property_type || 'Land')}
                     </span>
-                    ${videoCount > 0 ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-700 text-white shadow-xs">🎥 ${videoCount} Video</span>` : ''}
+                    ${videoCount > 0 ? `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-700/95 text-white shadow-md backdrop-blur-xs">🎥 ${videoCount} Video</span>` : ''}
                   </div>
-                  <div class="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] font-bold text-white bg-slate-900/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
-                    <span>📷 ${photoCount} Photos</span>
+
+                  <!-- Bottom Bar: Photos and High-Contrast Price -->
+                  <div class="absolute inset-x-3 bottom-3 flex items-center justify-between">
+                    <span class="px-2.5 py-1 rounded-xl text-xs font-bold text-white bg-black/60 backdrop-blur-md shadow-xs">
+                      📷 ${photoCount} Photos
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-2xl text-base font-black bg-slate-950/90 text-white shadow-lg backdrop-blur-md tracking-tight border border-white/10">
+                      ₹${totalFormatted}
+                    </span>
                   </div>
-                  <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-xl text-xs font-black bg-slate-900/90 text-white shadow-md backdrop-blur-xs">
-                    ₹${totalFormatted}
-                  </span>
                 </div>
 
-                <div class="p-4 space-y-2">
-                  <div class="flex items-start justify-between gap-2">
-                    <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1">${escapeHtml(prop.title)}</h3>
-                    <span class="text-[10px] text-slate-400 shrink-0">📅 ${dateFormatted}</span>
+                <!-- Body Content -->
+                <div class="p-4 sm:p-5 space-y-3">
+                  <div>
+                    <h3 class="font-extrabold text-slate-900 text-base leading-snug line-clamp-1 group-hover:text-brand-600 transition-colors">${escapeHtml(prop.title)}</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5 font-medium">📅 Added: ${dateFormatted}</p>
                   </div>
 
-                  <p class="text-xs text-slate-500 truncate flex items-center gap-1">
-                    <span>📍 ${escapeHtml(prop.location)}</span>
-                    ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="ml-auto text-emerald-600 font-bold hover:underline shrink-0">Map 📍</a>` : ''}
-                  </p>
+                  <!-- Location Bar with Map -->
+                  <div class="flex items-center justify-between gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl text-xs">
+                    <span class="truncate font-semibold text-slate-700">📍 ${escapeHtml(prop.location)}</span>
+                    ${mapLink ? `<a href="${escapeHtml(mapLink)}" target="_blank" class="text-emerald-700 font-bold hover:underline shrink-0 text-[11px]">Map 📍</a>` : ''}
+                  </div>
 
-                  <div class="bg-purple-50/70 p-2.5 rounded-xl border border-purple-100 text-xs text-slate-700 space-y-1">
-                    <div class="flex justify-between font-semibold">
-                      <span>Area: ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha` : ''} (${prop.land_area_guntha ? `${prop.land_area_guntha} Guntha` : 'Custom'})</span>
-                      <span class="text-brand-700 font-bold">${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
+                  <!-- Key Spec Grid -->
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 bg-purple-50/80 border border-purple-100 rounded-xl">
+                      <span class="text-[10px] uppercase font-bold text-purple-700 block">📐 Land Area</span>
+                      <p class="font-black text-slate-900 text-xs mt-0.5">
+                        ${prop.land_area_vigha ? `${prop.land_area_vigha} Vigha` : `${prop.land_area_guntha || 0} Guntha`}
+                      </p>
+                      <span class="text-[10px] text-slate-500">${prop.land_area_acre ? `${prop.land_area_acre} Acre` : ''}</span>
                     </div>
-                    <div class="flex justify-between text-[11px] text-slate-500 pt-0.5 border-t border-purple-200/50">
-                      <span>7/12: <strong>${escapeHtml(prop.names_in_7_12 || 'N/A')}</strong></span>
-                      <span>Road: <strong>${escapeHtml((prop.road_type || '').split(' ')[0] || 'N/A')}</strong></span>
+
+                    <div class="p-2.5 bg-brand-50/80 border border-brand-100 rounded-xl">
+                      <span class="text-[10px] uppercase font-bold text-brand-700 block">📜 7/12 &amp; Road</span>
+                      <p class="font-bold text-slate-800 text-xs mt-0.5 truncate">
+                        ${escapeHtml(prop.names_in_7_12 || '1 Name')}
+                      </p>
+                      <span class="text-[10px] text-slate-500">${escapeHtml((prop.road_type || 'Damar').split(' ')[0])}</span>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-500">
-                    <span class="px-2 py-0.5 bg-slate-100 rounded">💧 ${escapeHtml(waterStr)}</span>
-                    <span class="px-2 py-0.5 bg-slate-100 rounded">⚡ Light: ${escapeHtml(prop.light_electricity || 'Yes')}</span>
+                  <!-- Facilities Chips -->
+                  <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-600">
+                    <span class="px-2 py-0.5 bg-slate-100 rounded-lg">💧 ${escapeHtml(waterStr)}</span>
+                    <span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded-lg">⚡ Light: ${escapeHtml(prop.light_electricity || 'Yes')}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="editProperty('${prop.id}')" class="flex-1 py-2 px-3 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+              <!-- Action Buttons (High Touch Target 44px Height) -->
+              <div class="p-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between gap-2.5">
+                <button type="button" onclick="editProperty('${prop.id}')" class="flex-1 py-2.5 px-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm active:scale-98 cursor-pointer">
                   <span>✏️ Edit Details</span>
                 </button>
-                <button type="button" onclick="deleteProperty('${prop.id}')" class="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="Delete Property">
+                <button type="button" onclick="deleteProperty('${prop.id}')" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 active:scale-98 cursor-pointer" title="Delete Property">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   <span>Delete</span>
                 </button>
